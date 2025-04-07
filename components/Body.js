@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -12,52 +12,123 @@ import {
 import { router } from 'expo-router';
 import DropDownComponent from './DropDownComponent';
 import { Ionicons } from '@expo/vector-icons';
+import ContadorQuantidade from './Contador';
+import { buscarColecoes,buscarQualidades,buscarRaridades } from '../app/DAO/database';
 
-const data = [
-  { label: 'Item 1', value: '1' },
-  { label: 'Item 2', value: '2' },
-  { label: 'Item 3', value: '3' },
-  { label: 'Item 4', value: '4' },
-  { label: 'Item 5', value: '5' },
-  { label: 'Item 6', value: '6' },
-  { label: 'Item 7', value: '7' },
-  { label: 'Item 8', value: '8' },
-];
+export default function Body({
+  nome, setNome,
+  codigo, setCodigo,
+  colecao, setColecao,
+  precoCompra, setPrecoCompra,
+  dataCompra, setDataCompra,
+  quantidade, setQuantidade,
+  raridade, setRaridade,
+  qualidade, setQualidade,
+  imagem, setImagem,
+ 
+}) {
 
-export default function Body() {
-  const [imageUrl, setImageUrl] = useState(
-    'https://i.pinimg.com/736x/71/1e/da/711eda25308c65a7756751088866e181.jpg'
-  );
+  useEffect(() => {
+   fetchColecao();
+   fetchRaridade();
+   fetchQualidade();
+  }, []);               
+  
+
+  const [dataColecao,setDataColecao] = useState([]);
+  const [dataQualidade,setDataQualidade] = useState([]);
+  const [dataRaridade,setDataRaridade] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState('');
 
   const handleImagePress = () => {
-    setNewImageUrl(imageUrl);
+    setNewImageUrl(imagem);
     setModalVisible(true);
   };
 
   const handleConfirm = () => {
-    setImageUrl(newImageUrl);
+    if (newImageUrl && newImageUrl.trim() !== '') {
+      setImagem(newImageUrl);
+    }
     setModalVisible(false);
+  };
+  
+  const fetchColecao= async () => {
+    try {
+      const data = await buscarColecoes();
+       // 🔹 Armazena todas as modalidades no estado     
+      setDataColecao(data);
+      //console.log(data);
+      
+    } catch (error) {
+      console.error("Erro ao buscar Coleções:", error);
+    }
+  };
+  const fetchRaridade= async () => {
+    try {
+      const data = await buscarRaridades();
+       // 🔹 Armazena todas as modalidades no estado     
+      setDataRaridade(data);
+      //console.log(data);
+      
+    } catch (error) {
+      console.error("Erro ao buscar Raridades:", error);
+    }
+  };
+  const fetchQualidade= async () => {
+    try {
+      const data = await buscarQualidades();
+       // 🔹 Armazena todas as modalidades no estado     
+      setDataQualidade(data);
+      //console.log(data);
+      
+    } catch (error) {
+      console.error("Erro ao buscar Qualidades:", error);
+    }
   };
 
   return (
     <View style={styles.container}>
       {/* Imagem clicável */}
       <TouchableOpacity onPress={handleImagePress}>
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.image}
-          resizeMode="center"
-        />
+      <Image
+        source={
+          imagem && imagem.trim() !== ''
+            ? { uri: imagem }
+            : require('../assets/images/verso.jpg') // ou qualquer imagem local
+        }
+        style={styles.image}
+        resizeMode="center"
+      />
+
       </TouchableOpacity>
 
-      <TextInput style={styles.input} placeholder="Nome da carta" />
-      <TextInput style={styles.input} placeholder="Código" />
+      <TextInput
+        style={styles.input}
+        placeholder="Nome da carta"
+        value={nome}
+        onChangeText={setNome}
+      />
 
+      <TextInput
+        style={styles.input}
+        placeholder="Código"
+        value={codigo}
+        onChangeText={setCodigo}
+      />
+      {/*Coleção*/}
       <View style={styles.dropdownRow}>
         <View style={styles.dropdownWrapper}>
-          <DropDownComponent data={data} label="Coleção" />
+          <DropDownComponent
+            data={dataColecao}
+            label="Coleção"
+            value={colecao}
+            onChange={(value,label) => {
+              setColecao(label);
+              console.log('Coleção selecionada:', label, 'Id - ',value);
+            }}
+            
+          />
         </View>
         <TouchableOpacity
           style={styles.addButton}
@@ -67,21 +138,68 @@ export default function Body() {
               params: {
                 placeholder: 'Nome da coleção',
                 titulo: 'Adicionar Coleção',
+                colecao:true,
+                
               },
             })
           }
         >
           <Ionicons name="add-circle-outline" size={24} color="#4A90E2" />
         </TouchableOpacity>
+
+        {/* Botão Excluir */}
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() =>
+            router.push({
+              pathname: '(telas)/Excluir',
+              params: {                
+                titulo: 'Excluir Coleção',                
+                colecao:true,
+                label:'Coleção',
+                data: JSON.stringify(dataColecao) // << AQUI
+                
+               
+              },
+            })
+          }
+        >
+          <Ionicons name="trash-outline" size={24} color="red" />
+        </TouchableOpacity>
       </View>
 
-      <TextInput style={styles.input} placeholder="Preço de compra unitário" keyboardType="numeric" />
-      <TextInput style={styles.input} placeholder="Data da Compra" />
-      <TextInput style={styles.input} placeholder="Quantidade" keyboardType="numeric" />
+      <TextInput
+        style={styles.input}
+        placeholder="Preço de compra unitário"
+        keyboardType="numeric"
+        value={String(precoCompra)}
+        onChangeText={(text) => setPrecoCompra(parseFloat(text) || 0)}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Data da Compra"
+        value={dataCompra}
+        onChangeText={setDataCompra}
+      />
+
+      <ContadorQuantidade
+        value={quantidade || 1}
+        onChange={setQuantidade}
+      />
 
       <View style={styles.dropdownRow}>
         <View style={styles.dropdownWrapper}>
-          <DropDownComponent data={data} label="Raridade" />
+          <DropDownComponent
+            data={dataRaridade}
+            label="Raridade"
+            value={raridade}
+            onChange={(value,label ) => {
+              setRaridade(label);
+              console.log('Raridade selecionada:', label, 'Id - ', value);
+            }}
+            
+          />
         </View>
         <TouchableOpacity
           style={styles.addButton}
@@ -91,17 +209,47 @@ export default function Body() {
               params: {
                 placeholder: 'Digite a Raridade',
                 titulo: 'Adicionar Raridade',
+                raridade:true
               },
             })
           }
         >
           <Ionicons name="add-circle-outline" size={24} color="#4A90E2" />
         </TouchableOpacity>
+
+        {/* Botão Excluir */}
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() =>
+            router.push({
+              pathname: '(telas)/Excluir',
+              params: {                
+                titulo: 'Excluir Raridade',                
+                raridade:true,
+                label:'Raridade',
+                data: JSON.stringify(dataRaridade) // << AQUI
+                
+               
+              },
+            })
+          }
+        >
+          <Ionicons name="trash-outline" size={24} color="red" />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.dropdownRow}>
         <View style={styles.dropdownWrapper}>
-          <DropDownComponent data={data} label="Qualidade" />
+          <DropDownComponent
+            data={dataQualidade}
+            label="Qualidade"
+            value={qualidade}
+            onChange={(value, label) => {
+              setQualidade(label);
+              console.log('Qualidade selecionada:', label, 'Id - ',value);
+            }}
+            
+          />
         </View>
         <TouchableOpacity
           style={styles.addButton}
@@ -111,11 +259,31 @@ export default function Body() {
               params: {
                 placeholder: 'Digite a Qualidade',
                 titulo: 'Adicionar Qualidade',
+                qualidade: true
               },
             })
           }
         >
           <Ionicons name="add-circle-outline" size={24} color="#4A90E2" />
+        </TouchableOpacity>
+        {/* Botão Excluir */}
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() =>
+            router.push({
+              pathname: '(telas)/Excluir',
+              params: {                
+                titulo: 'Excluir Qualidade',                
+                qualidade:true,
+                label:'Qualidade',
+                data: JSON.stringify(dataQualidade) // << AQUI
+                
+               
+              },
+            })
+          }
+        >
+          <Ionicons name="trash-outline" size={24} color="red" />
         </TouchableOpacity>
       </View>
 

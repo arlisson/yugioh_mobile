@@ -4,24 +4,16 @@ import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 
-const DropdownComponent = ({data,label='Selecionar'}) => {
-  const [value, setValue] = useState(null);
+const DropdownComponent = ({
+  data,
+  label = 'Selecionar',
+  value,
+  onChange,
+}) => {
   const [isFocus, setIsFocus] = useState(false);
-
-  const renderLabel = () => {
-    if (value || isFocus) {
-      return (
-        <Text style={[styles.label, isFocus && { color: 'blue' }]}>
-          {label}
-        </Text>
-      );
-    }
-    return null;
-  };
 
   return (
     <View style={styles.container}>
-      {renderLabel()}
       <Dropdown
         style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
         placeholderStyle={styles.placeholderStyle}
@@ -35,24 +27,18 @@ const DropdownComponent = ({data,label='Selecionar'}) => {
         valueField="value"
         placeholder={!isFocus ? label : '...'}
         searchPlaceholder="Procurar..."
-        value={value}
+        value={value} // <-- valor controlado via prop
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={item => {
-          setValue(item.value);
+          onChange(item.value, item.label); // <-- envia valor para o pai
           setIsFocus(false);
         }}
-        renderLeftIcon={() => (
-          <AntDesign
-            style={styles.icon}
-            color={isFocus ? 'blue' : 'black'}            
-            size={20}
-          />
-        )}
       />
     </View>
   );
 };
+
 
 export default DropdownComponent;
 

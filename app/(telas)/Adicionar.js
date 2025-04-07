@@ -1,21 +1,44 @@
-import React from 'react';
+import React, { useEffect,useState } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import Cabecalho from '../../components/Cabecalho';
 import Botao from '../../components/Botao';
 import { useLocalSearchParams } from 'expo-router';
+import {inserirColecao,inserirQualidade,inserirRaridade} from '../DAO/database';
+
 
 export default function Adicionar() {
-  const { placeholder = 'Adicionar', titulo = 'Adicionar' } = useLocalSearchParams();
+  const { placeholder = 'Adicionar', titulo = 'Adicionar',colecao=false,qualidade=false,raridade=false,
+    nome,
+    codigo,    
+    precoCompra,
+    dataCompra,
+    quantidade,    
+    imagem
+   } = useLocalSearchParams();
+  const [texto,setTexto] = useState();
+
+  const handleSalvar = (texto) => {
+    if(colecao){
+     inserirColecao(texto);
+    }else if(qualidade){
+      inserirQualidade(texto);
+    }else if(raridade){
+      inserirRaridade (texto);
+    }
+  };
+  
+ 
   return (
     <View style={styles.container}>
       <Cabecalho seta={true} title={titulo} />
 
       <View style={styles.content}>
-        <TextInput style={styles.input} placeholder={placeholder} />
+        <TextInput style={styles.input} placeholder={placeholder} onChangeText={setTexto} />
       </View>
 
       <View style={styles.footer}>
-        <Botao texto="Adicionar" />
+      <Botao texto="Adicionar" onPress={() => handleSalvar(texto)} />
+
       </View>
     </View>
   );

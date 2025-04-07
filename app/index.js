@@ -6,8 +6,9 @@ import stylesGeral from '../assets/styles/stylesGeral';
 import HeaderTabela  from '../components/HeaderTabela';
 import LinhasTabela from '../components/LinhasTabela';
 import Botao from '../components/Botao';
+import {createDatabase,deleteDatabase, openDatabase, buscarCartas} from './DAO/database'
 
-const cartasExemplo = [
+const cartas = [
    {
      id: 1,
      foto: 'dragao_chamas_azuis.jpg',
@@ -73,13 +74,36 @@ export default function Home() {
     
 const [searchQuery, setSearchQuery] = useState(''); // Estado para armazenar o que o usuário digita na pesquisa
 const [filteredCartas, setFilteredCartas] = useState([]); // Estado para as Cartas filtradas
+const [cartas, setCartas] = useState([]);
+const db = openDatabase();
+
+useEffect(() => {
+  (async () => {
+   //await createDatabase()
+   
+
+  })();
+
+  
+}, []);
+
+useEffect(() => {
+  const carregarCartas = async () => {
+    const resultado = await buscarCartas();
+    setCartas(resultado);
+  };
+
+  carregarCartas();
+}, []);
+
+
 
 useEffect(() => {
    const busca = searchQuery.toUpperCase();
  
    if (busca) {
      setFilteredCartas(
-       cartasExemplo.filter((carta) => {
+       cartas.filter((carta) => {
          const id = String(carta.id).toUpperCase();
          const nome = carta.nome?.toUpperCase() || '';
          const codigo = carta.codigo?.toUpperCase() || '';
@@ -92,7 +116,7 @@ useEffect(() => {
        })
      );
    } else {
-     setFilteredCartas(cartasExemplo);
+     setFilteredCartas(cartas);
    }
  }, [searchQuery]);
 
