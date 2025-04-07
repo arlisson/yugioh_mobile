@@ -11,18 +11,36 @@ export const openDatabase = () => {
 
 
 export const deleteDatabase = async (dbName = "yugioh") => {
-  try {
-    db = SQLite.openDatabaseSync(dbName);
-    if (db) await db.closeAsync();
+  Alert.alert(
+    'Confirmação',
+    'Tem certeza que deseja apagar o banco de dados?',
+    [
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+      {
+        text: 'Apagar',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            db = SQLite.openDatabaseSync(dbName);
+            if (db) await db.closeAsync();
 
-    await SQLite.deleteDatabaseAsync(dbName);
-    Alert.alert('Sucesso','🗑️ Banco de dados apagado com sucesso');
-    console.log("🗑️ Banco de dados apagado com sucesso!");
+            await SQLite.deleteDatabaseAsync(dbName);
+            Alert.alert('Sucesso', '🗑️ Banco de dados apagado com sucesso');
+            console.log("🗑️ Banco de dados apagado com sucesso!");
 
-    db = null; // marca como fechado
-  } catch (error) {
-    console.error("❌ Erro ao apagar banco de dados:", error);
-  }
+            db = null;
+          } catch (error) {
+            console.error("❌ Erro ao apagar banco de dados:", error);
+            Alert.alert('Erro', 'Não foi possível apagar o banco de dados.');
+          }
+        },
+      },
+    ],
+    { cancelable: true }
+  );
 };
 export const createDatabase = () => {
     const db = openDatabase();

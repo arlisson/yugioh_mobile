@@ -2,28 +2,24 @@ import React, { useEffect,useState } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import Cabecalho from '../../components/Cabecalho';
 import Botao from '../../components/Botao';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import {inserirColecao,inserirQualidade,inserirRaridade} from '../DAO/database';
 
 
 export default function Adicionar() {
-  const { placeholder = 'Adicionar', titulo = 'Adicionar',colecao=false,qualidade=false,raridade=false,
-    nome,
-    codigo,    
-    precoCompra,
-    dataCompra,
-    quantidade,    
-    imagem
-   } = useLocalSearchParams();
+  const { placeholder = 'Adicionar', titulo = 'Adicionar',colecao=false,qualidade=false,raridade=false,} = useLocalSearchParams();
   const [texto,setTexto] = useState();
 
   const handleSalvar = (texto) => {
     if(colecao){
      inserirColecao(texto);
+     router.back();
     }else if(qualidade){
       inserirQualidade(texto);
+      router.back();
     }else if(raridade){
       inserirRaridade (texto);
+      router.back();
     }
   };
   

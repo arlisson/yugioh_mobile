@@ -7,7 +7,7 @@ import {createDatabase,deleteDatabase, openDatabase, buscarCartas} from './DAO/d
 
 
 export default function Index() {   
-    
+
 
 return (
    
@@ -18,8 +18,8 @@ return (
       <View style={styles.container}>
       <View style={styles.buttonGroup}>
         <Botao texto="Criar Banco" onPress={() => createDatabase()} />
-        <Botao texto="Apagar Banco" cor="red" onPress={() => deleteDatabase()} />
-        <Botao texto="Tela Inicial" onPress={() => router.push('./Home')} />
+        <Botao texto="Apagar Banco" cor="red" onPress={() => deleteDatabase()} foto={'trash-outline'}/>
+        <Botao texto="Tela Inicial" onPress={() => router.push('./Home')} foto={'home-outline'} />
       </View>
     </View>
 
