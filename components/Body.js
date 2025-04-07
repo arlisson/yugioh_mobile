@@ -206,9 +206,10 @@ export default function Body({
         style={styles.input}
         placeholder="Preço de compra unitário"
         keyboardType="numeric"
-        value={String(precoCompra)}
-        onChangeText={(text) => setPrecoCompra(parseFloat(text) || 0)}
+        value={precoCompra}
+        onChangeText={setPrecoCompra}
       />
+
       {/*Calendário*/}
 
       <View style={styles.viewTitulos}>

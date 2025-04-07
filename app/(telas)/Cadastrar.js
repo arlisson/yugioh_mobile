@@ -91,7 +91,7 @@ export default function Cadastrar() {
       nome,
       codigo,
       colecao,
-      preco_compra: parseFloat(precoCompra),
+      preco_compra: parseFloat(precoCompra) || 0,
       data_compra: dataCompra,
       quantidade,
       raridade,
