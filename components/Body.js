@@ -17,6 +17,8 @@ import { buscarColecoes,buscarQualidades,buscarRaridades } from '../app/DAO/data
 
 import CampoCalendario from './Calendario';
 
+
+
 export default function Body({
   nome, setNome,
   codigo, setCodigo,

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ScrollView, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Cabecalho from '../../components/Cabecalho';
 import Botao from '../../components/Botao';
 import Body from '../../components/Body';
@@ -16,6 +17,18 @@ export default function Cadastrar() {
   const [qualidade, setQualidade] = useState('');
   const [imagem, setImagem] = useState('');
 
+  const campos = {
+    nome: [nome, setNome],
+    codigo: [codigo, setCodigo],
+    colecao: [colecao, setColecao],
+    precoCompra: [precoCompra, setPrecoCompra],
+    dataCompra: [dataCompra, setDataCompra],
+    quantidade: [quantidade, setQuantidade],
+    raridade: [raridade, setRaridade],
+    qualidade: [qualidade, setQualidade],
+    imagem: [imagem, setImagem],
+  };
+
   const isValidURL = (string) => {
     try {
       new URL(string);
@@ -25,8 +38,44 @@ export default function Cadastrar() {
     }
   };
 
+  // 🔄 Carrega os dados persistidos no AsyncStorage
+  useEffect(() => {
+    (async () => {
+      for (const campo in campos) {
+        const valor = await AsyncStorage.getItem(`@cadastro_${campo}`);
+        if (valor !== null) {
+          if (campo === 'quantidade') campos[campo][1](parseInt(valor));
+          else campos[campo][1](valor);
+        }
+      }
+    })();
+  }, []);
+
+  // 💾 Atualiza AsyncStorage sempre que algum valor muda
+  useEffect(() => {
+    const persistirCampos = async () => {
+      try {
+        await AsyncStorage.setItem('@cadastro_nome', nome ?? '');
+        await AsyncStorage.setItem('@cadastro_codigo', codigo ?? '');
+        await AsyncStorage.setItem('@cadastro_colecao', colecao ?? '');
+        await AsyncStorage.setItem('@cadastro_precoCompra', precoCompra?.toString() ?? '');
+        await AsyncStorage.setItem('@cadastro_dataCompra', dataCompra ?? '');
+        await AsyncStorage.setItem('@cadastro_quantidade', quantidade?.toString() ?? '0');
+        await AsyncStorage.setItem('@cadastro_raridade', raridade ?? '');
+        await AsyncStorage.setItem('@cadastro_qualidade', qualidade ?? '');
+        await AsyncStorage.setItem('@cadastro_imagem', imagem ?? '');
+      } catch (e) {
+        console.error('❌ Erro ao salvar campos no AsyncStorage:', e);
+      }
+    };
+  
+    persistirCampos();
+  }, [nome, codigo, colecao, precoCompra, dataCompra, quantidade, raridade, qualidade, imagem]);
+  
+
+  
+
   const handleSalvar = () => {
-    // 🔎 Verificações de campos obrigatórios
     if (!nome.trim()) return Alert.alert('Erro', 'Preencha o nome da carta.');
     if (!codigo.trim()) return Alert.alert('Erro', 'Preencha o código.');
     if (!colecao) return Alert.alert('Erro', 'Selecione uma coleção.');
@@ -37,8 +86,7 @@ export default function Cadastrar() {
     if (!raridade) return Alert.alert('Erro', 'Selecione uma raridade.');
     if (!qualidade) return Alert.alert('Erro', 'Selecione uma qualidade.');
     if (!imagem.trim() || !isValidURL(imagem)) return Alert.alert('Erro', 'Informe uma URL de imagem válida.');
-  
-    // Monta o objeto da carta
+
     const carta = {
       nome,
       codigo,
@@ -50,24 +98,23 @@ export default function Cadastrar() {
       qualidade,
       imagem,
     };
-  
-    // Confirmação antes de inserir
+
     Alert.alert(
       'Confirmação',
       'Tem certeza que deseja adicionar esta carta?',
       [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
+        { text: 'Cancelar', style: 'cancel' },
         {
           text: 'Adicionar',
-          onPress: () => {
+          onPress: async () => {
             try {
               inserirCarta(carta);
-              Alert.alert('Sucesso', 'Carta inserida com sucesso!');
-              // Se quiser limpar os campos após salvar:
-              // setNome(''); setCodigo(''); ... etc
+              //Alert.alert('Sucesso', 'Carta inserida com sucesso!');
+              // Limpa campos e cache
+              for (const campo in campos) {
+                campos[campo][1](campo === 'quantidade' ? 0 : '');
+                await AsyncStorage.removeItem(`@cadastro_${campo}`);
+              }
             } catch (error) {
               console.error('Erro ao inserir Carta:', error);
               Alert.alert('Erro', 'Não foi possível salvar a carta.');
@@ -78,7 +125,6 @@ export default function Cadastrar() {
       { cancelable: false }
     );
   };
-  
 
   return (
     <View style={{ flex: 1 }}>
