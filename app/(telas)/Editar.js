@@ -4,7 +4,7 @@ import Cabecalho from '../../components/Cabecalho';
 import Botao from '../../components/Botao';
 import Body from '../../components/Body';
 import { useLocalSearchParams } from 'expo-router';
-import { excluirCarta } from '../DAO/database'; 
+import { excluirCarta, atualizarCarta } from '../DAO/database'; 
 import { router } from 'expo-router';
 
 export default function Editar() {
@@ -74,33 +74,58 @@ const handleExcluir = () => {
 };
 
 
-  const handleSalvar = () => {
-    // 🔎 Verificações
-    if (!nome.trim()) return Alert.alert('Erro', 'Preencha o nome da carta.');
-    if (!codigo.trim()) return Alert.alert('Erro', 'Preencha o código.');
-    if (!colecao) return Alert.alert('Erro', 'Selecione uma coleção.');
-    if (!precoCompra || isNaN(precoCompra) || parseFloat(precoCompra) <= 0)
-      return Alert.alert('Erro', 'Informe um preço válido (maior que 0).');
-    if (!dataCompra.trim()) return Alert.alert('Erro', 'Informe a data da compra.');
-    if (!quantidade || quantidade <= 0) return Alert.alert('Erro', 'A quantidade deve ser maior que 0.');
-    if (!raridade) return Alert.alert('Erro', 'Selecione uma raridade.');
-    if (!qualidade) return Alert.alert('Erro', 'Selecione uma qualidade.');
-    if (!imagem.trim() || !isValidURL(imagem)) return Alert.alert('Erro', 'Informe uma URL de imagem válida.');
+const handleSalvar = async () => {
+  if (!nome.trim()) return Alert.alert('Erro', 'Preencha o nome da carta.');
+  if (!codigo.trim()) return Alert.alert('Erro', 'Preencha o código.');
+  if (!colecao) return Alert.alert('Erro', 'Selecione uma coleção.');
+  if (!precoCompra || isNaN(precoCompra) || parseFloat(precoCompra) <= 0)
+    return Alert.alert('Erro', 'Informe um preço válido (maior que 0).');
+  if (!dataCompra.trim()) return Alert.alert('Erro', 'Informe a data da compra.');
+  if (!quantidade || quantidade <= 0) return Alert.alert('Erro', 'A quantidade deve ser maior que 0.');
+  if (!raridade) return Alert.alert('Erro', 'Selecione uma raridade.');
+  if (!qualidade) return Alert.alert('Erro', 'Selecione uma qualidade.');
+  if (!imagem.trim() || !isValidURL(imagem)) return Alert.alert('Erro', 'Informe uma URL de imagem válida.');
 
-    const carta = {
-      nome,
-      codigo,
-      colecao,
-      preco_compra: parseFloat(precoCompra),
-      data_compra: dataCompra,
-      quantidade,
-      raridade,
-      qualidade,
-      imagem,
-    };
-
-    console.log('Carta alterada: ',carta)
+  const cartas = {
+    id: carta.id, // ← Certifique-se que está sendo definido corretamente
+    nome,
+    codigo,
+    colecao,
+    preco_compra: parseFloat(precoCompra),
+    data_compra: dataCompra,
+    quantidade,
+    raridade,
+    qualidade,
+    imagem,
   };
+
+  Alert.alert(
+    'Confirmar atualização',
+    'Tem certeza que deseja atualizar esta carta?',
+    [
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+      {
+        text: 'Atualizar',
+        onPress: async () => {
+          try {
+            await atualizarCarta(cartas);
+            //Alert.alert('Sucesso', 'Carta atualizada com sucesso!');
+            // router.back(); // se quiser voltar após salvar
+          } catch (error) {
+            console.error('Erro ao atualizar carta:', error);
+            //Alert.alert('Erro', 'Não foi possível atualizar a carta.');
+          }
+        },
+      },
+    ],
+    { cancelable: false }
+  );
+};
+
+
 
   return (
     <View style={{ flex: 1 }}>

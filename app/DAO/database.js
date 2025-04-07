@@ -16,6 +16,7 @@ export const deleteDatabase = async (dbName = "yugioh") => {
     if (db) await db.closeAsync();
 
     await SQLite.deleteDatabaseAsync(dbName);
+    Alert.alert('Sucesso','🗑️ Banco de dados apagado com sucesso');
     console.log("🗑️ Banco de dados apagado com sucesso!");
 
     db = null; // marca como fechado

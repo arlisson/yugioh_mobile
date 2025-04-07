@@ -246,12 +246,12 @@ export default function Body({
       <View style={styles.dropdownRow}>
         <View style={styles.dropdownWrapper}>
         <DropDownComponent
-          data={dataQualidade}
-          label="Qualidade"
-          value={getValueByLabel(qualidade, dataQualidade)}
+          data={dataRaridade}
+          label="Raridade"
+          value={getValueByLabel(raridade, dataRaridade)}
           onChange={(value, label) => {
-            setQualidade(label);
-            console.log('Qualidade selecionada:', label, 'Id - ', value);
+            setRaridade(label);
+            console.log('Raridade selecionada:', label, 'Id - ', value);
           }}
         />
 
@@ -299,12 +299,12 @@ export default function Body({
       <View style={styles.dropdownRow}>
         <View style={styles.dropdownWrapper}>
         <DropDownComponent
-          data={dataRaridade}
-          label="Raridade"
-          value={getValueByLabel(raridade, dataRaridade)}
+          data={dataQualidade}
+          label="Qualidade"
+          value={getValueByLabel(qualidade, dataQualidade)}
           onChange={(value, label) => {
-            setRaridade(label);
-            console.log('Raridade selecionada:', label, 'Id - ', value);
+            setQualidade(label);
+            console.log('Qualidade selecionada:', label, 'Id - ', value);
           }}
         />
 

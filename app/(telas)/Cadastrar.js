@@ -26,7 +26,7 @@ export default function Cadastrar() {
   };
 
   const handleSalvar = () => {
-    // 🔎 Verificações
+    // 🔎 Verificações de campos obrigatórios
     if (!nome.trim()) return Alert.alert('Erro', 'Preencha o nome da carta.');
     if (!codigo.trim()) return Alert.alert('Erro', 'Preencha o código.');
     if (!colecao) return Alert.alert('Erro', 'Selecione uma coleção.');
@@ -37,7 +37,8 @@ export default function Cadastrar() {
     if (!raridade) return Alert.alert('Erro', 'Selecione uma raridade.');
     if (!qualidade) return Alert.alert('Erro', 'Selecione uma qualidade.');
     if (!imagem.trim() || !isValidURL(imagem)) return Alert.alert('Erro', 'Informe uma URL de imagem válida.');
-
+  
+    // Monta o objeto da carta
     const carta = {
       nome,
       codigo,
@@ -49,17 +50,35 @@ export default function Cadastrar() {
       qualidade,
       imagem,
     };
-
-    try {
-      inserirCarta(carta);
-      Alert.alert('Sucesso', 'Carta inserida com sucesso!');
-      // Se quiser limpar os campos após salvar:
-      // setNome(''); setCodigo(''); ... etc
-    } catch (error) {
-      console.error('Erro ao inserir Carta:', error);
-      Alert.alert('Erro', 'Não foi possível salvar a carta.');
-    }
+  
+    // Confirmação antes de inserir
+    Alert.alert(
+      'Confirmação',
+      'Tem certeza que deseja adicionar esta carta?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Adicionar',
+          onPress: () => {
+            try {
+              inserirCarta(carta);
+              Alert.alert('Sucesso', 'Carta inserida com sucesso!');
+              // Se quiser limpar os campos após salvar:
+              // setNome(''); setCodigo(''); ... etc
+            } catch (error) {
+              console.error('Erro ao inserir Carta:', error);
+              Alert.alert('Erro', 'Não foi possível salvar a carta.');
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
+  
 
   return (
     <View style={{ flex: 1 }}>
