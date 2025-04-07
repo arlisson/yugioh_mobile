@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 export default function ContadorQuantidade({ value = 0, onChange }) {
-  const [quantidade, setQuantidade] = useState(value);
-
   const alterar = (delta) => {
-    const novaQtd = Math.max(0, quantidade + delta); // não deixa ir abaixo de 0
-    setQuantidade(novaQtd);
-    if (onChange) onChange(novaQtd); // se quiser sincronizar fora
+    const novaQtd = Math.max(0, value + delta); // valor vem da prop
+    if (onChange) onChange(novaQtd); // comunica ao pai
   };
 
   return (
@@ -16,7 +13,7 @@ export default function ContadorQuantidade({ value = 0, onChange }) {
         <Text style={styles.botaoTexto}>-</Text>
       </TouchableOpacity>
 
-      <Text style={styles.valor}>Quantidade: {quantidade}</Text>
+      <Text style={styles.valor}>Quantidade: {value}</Text>
 
       <TouchableOpacity style={styles.botao} onPress={() => alterar(1)}>
         <Text style={styles.botaoTexto}>+</Text>

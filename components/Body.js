@@ -15,6 +15,8 @@ import { Ionicons } from '@expo/vector-icons';
 import ContadorQuantidade from './Contador';
 import { buscarColecoes,buscarQualidades,buscarRaridades } from '../app/DAO/database';
 
+import CampoCalendario from './Calendario';
+
 export default function Body({
   nome, setNome,
   codigo, setCodigo,
@@ -40,6 +42,12 @@ export default function Body({
   const [dataRaridade,setDataRaridade] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState('');
+  const [mostrarCalendario, setMostrarCalendario] = useState(false);
+
+  const handleSelecionarData = (data) => {
+    setDataCompra(data);
+    setMostrarCalendario(false); // Oculta após seleção
+  };
 
   const handleImagePress = () => {
     setNewImageUrl(imagem);
@@ -87,6 +95,15 @@ export default function Body({
     }
   };
 
+  
+
+  // Função que recebe uma label e retorna o value correspondente do array de dados
+  const getValueByLabel = (label, dataArray) => {
+    const found = dataArray.find((item) => item.label === label);
+    return found ? found.value : null;
+  };
+
+
   return (
     <View style={styles.container}>
       {/* Imagem clicável */}
@@ -101,34 +118,46 @@ export default function Body({
         resizeMode="center"
       />
 
-      </TouchableOpacity>
 
+      </TouchableOpacity>
+      <View style={styles.viewTitulos}>
+      <Text style={styles.titulos}>Nome:</Text>
+      </View>
+      
       <TextInput
         style={styles.input}
         placeholder="Nome da carta"
         value={nome}
         onChangeText={setNome}
       />
-
+      
+      <View style={styles.viewTitulos}>
+      <Text style={styles.titulos}>Código:</Text>
+      </View>
       <TextInput
         style={styles.input}
         placeholder="Código"
         value={codigo}
         onChangeText={setCodigo}
       />
+
+
       {/*Coleção*/}
+      <View style={styles.viewTitulos}>
+      <Text style={styles.titulos}>Coleção:</Text>
+      </View>
       <View style={styles.dropdownRow}>
         <View style={styles.dropdownWrapper}>
-          <DropDownComponent
-            data={dataColecao}
-            label="Coleção"
-            value={colecao}
-            onChange={(value,label) => {
-              setColecao(label);
-              console.log('Coleção selecionada:', label, 'Id - ',value);
-            }}
-            
-          />
+        <DropDownComponent
+          data={dataColecao}
+          label="Coleção"
+          value={getValueByLabel(colecao, dataColecao)} // <- transforma a label recebida em value
+          onChange={(value, label) => {
+            setColecao(label); // você mantém a label no estado externo
+            console.log('Coleção selecionada:', label, 'Id - ', value);
+          }}
+        />            
+      
         </View>
         <TouchableOpacity
           style={styles.addButton}
@@ -168,6 +197,9 @@ export default function Body({
         </TouchableOpacity>
       </View>
 
+      <View style={styles.viewTitulos}>
+      <Text style={styles.titulos}>Preço Unitário:</Text>
+      </View>
       <TextInput
         style={styles.input}
         placeholder="Preço de compra unitário"
@@ -175,31 +207,54 @@ export default function Body({
         value={String(precoCompra)}
         onChangeText={(text) => setPrecoCompra(parseFloat(text) || 0)}
       />
+      {/*Calendário*/}
 
-      <TextInput
-        style={styles.input}
-        placeholder="Data da Compra"
-        value={dataCompra}
-        onChangeText={setDataCompra}
-      />
+      <View style={styles.viewTitulos}>
+      <Text style={styles.titulos}>Data da Compra:</Text>
+      </View>
 
+      <View style={{ width: '100%' }}>
+            {/* Área que parece um TextInput */}
+            <TouchableOpacity
+              onPress={() => setMostrarCalendario(!mostrarCalendario)} // Toggle
+              style={styles.fakeInput}
+            >
+              <Text style={dataCompra ? styles.inputText : styles.placeholder}>
+                {dataCompra ? `Data: ${dataCompra}` : 'Data da Compra'}
+              </Text>
+            </TouchableOpacity>
+
+            {/* Calendário visível apenas se mostrarCalendario for true */}
+            {mostrarCalendario && (
+              <CampoCalendario
+                dataSelecionada={dataCompra}
+                setDataSelecionada={handleSelecionarData}
+              />
+            )}
+          </View>
+      
+      <View style={styles.viewTitulos}>
+      <Text style={styles.titulos}>Quantidade:</Text>
+      </View>
       <ContadorQuantidade
-        value={quantidade || 1}
+        value={quantidade || 0}
         onChange={setQuantidade}
       />
-
+      <View style={styles.viewTitulos}>
+      <Text style={styles.titulos}>Raridade:</Text>
+      </View>
       <View style={styles.dropdownRow}>
         <View style={styles.dropdownWrapper}>
-          <DropDownComponent
-            data={dataRaridade}
-            label="Raridade"
-            value={raridade}
-            onChange={(value,label ) => {
-              setRaridade(label);
-              console.log('Raridade selecionada:', label, 'Id - ', value);
-            }}
-            
-          />
+        <DropDownComponent
+          data={dataQualidade}
+          label="Qualidade"
+          value={getValueByLabel(qualidade, dataQualidade)}
+          onChange={(value, label) => {
+            setQualidade(label);
+            console.log('Qualidade selecionada:', label, 'Id - ', value);
+          }}
+        />
+
         </View>
         <TouchableOpacity
           style={styles.addButton}
@@ -237,19 +292,22 @@ export default function Body({
           <Ionicons name="trash-outline" size={24} color="red" />
         </TouchableOpacity>
       </View>
-
+      
+      <View style={styles.viewTitulos}>
+      <Text style={styles.titulos}>Qualidade:</Text>
+      </View>
       <View style={styles.dropdownRow}>
         <View style={styles.dropdownWrapper}>
-          <DropDownComponent
-            data={dataQualidade}
-            label="Qualidade"
-            value={qualidade}
-            onChange={(value, label) => {
-              setQualidade(label);
-              console.log('Qualidade selecionada:', label, 'Id - ',value);
-            }}
-            
-          />
+        <DropDownComponent
+          data={dataRaridade}
+          label="Raridade"
+          value={getValueByLabel(raridade, dataRaridade)}
+          onChange={(value, label) => {
+            setRaridade(label);
+            console.log('Raridade selecionada:', label, 'Id - ', value);
+          }}
+        />
+
         </View>
         <TouchableOpacity
           style={styles.addButton}
@@ -356,4 +414,29 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '90%',
   },
+  fakeInput: {
+    width: '100%',
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    justifyContent: 'center',
+    marginBottom: 12,
+    backgroundColor: '#fff',
+  },
+  inputText: {
+    fontSize: 14,
+    color: '#000',
+  },
+  placeholder: {
+    fontSize: 14,
+    color: '#888',
+  },
+  titulos:{   
+    fontSize:19
+  },
+  viewTitulos:{
+    alignSelf:'flex-start'
+  }
 });

@@ -8,13 +8,11 @@ export const openDatabase = () => {
   return db;
 };
 
-export const getDb = () => {
-  if (!db) db = openDatabase(); // fallback se alguém tentar sem abrir
-  return db;
-};
+
 
 export const deleteDatabase = async (dbName = "yugioh") => {
   try {
+    db = SQLite.openDatabaseSync(dbName);
     if (db) await db.closeAsync();
 
     await SQLite.deleteDatabaseAsync(dbName);
@@ -74,8 +72,8 @@ export const createDatabase = () => {
   };
 
 
-  export const inserirCarta = (carta) => {
-    const db = getDb();
+  export const inserirCarta = async(carta) => {
+    const db = await openDatabase();
   
     try {
       db.runAsync(
@@ -104,8 +102,8 @@ export const createDatabase = () => {
     }
   };
   
-  export const inserirQualidade = (qualidade) => {
-    const db = getDb();
+  export const inserirQualidade = async (qualidade) => {
+    const db = await openDatabase();
   
     try {
       db.runAsync(
@@ -121,8 +119,8 @@ export const createDatabase = () => {
     }
   };
 
-  export const inserirRaridade = (raridade) => {
-    const db = getDb();
+  export const inserirRaridade = async (raridade) => {
+    const db = await openDatabase();
   
     try {
       db.runAsync(
@@ -138,8 +136,8 @@ export const createDatabase = () => {
     }
   };
 
-  export const inserirColecao = (colecao) => {
-    const db = getDb();
+  export const inserirColecao = async (colecao) => {
+    const db = await openDatabase();
   
     try {
       db.runAsync(
@@ -156,7 +154,7 @@ export const createDatabase = () => {
   };
 
   export const buscarQualidades = async () => {
-    const db = getDb();
+    const db = await openDatabase();
   
     try {
       const result = await db.getAllAsync(`SELECT * FROM qualidades`);
@@ -171,7 +169,7 @@ export const createDatabase = () => {
   };
 
   export const buscarRaridades = async () => {
-    const db = getDb();
+    const db = await openDatabase();
   
     try {
       const result = await db.getAllAsync(`SELECT * FROM raridades`);
@@ -186,7 +184,7 @@ export const createDatabase = () => {
   };
 
   export const buscarColecoes = async () => {
-    const db = getDb();
+    const db = await openDatabase();
   
     try {
       const result = await db.getAllAsync(`SELECT * FROM colecoes`);
@@ -201,7 +199,7 @@ export const createDatabase = () => {
   };
   
   export const excluirColecao = async (id) => {
-    const db = getDb();
+    const db = await openDatabase();
     try {
       await db.runAsync(
         `DELETE FROM colecoes WHERE id = ?`,
@@ -214,7 +212,7 @@ export const createDatabase = () => {
   };
 
   export const excluirQualidade = async (id) => {
-    const db = getDb();
+    const db = await openDatabase();
     try {
       await db.runAsync(
         `DELETE FROM qualidades WHERE id = ?`,
@@ -227,7 +225,7 @@ export const createDatabase = () => {
   };
 
   export const excluirRaridade = async (id) => {
-    const db = getDb();
+    const db = await openDatabase();
     try {
       await db.runAsync(
         `DELETE FROM raridades WHERE id= ?`,
@@ -240,7 +238,7 @@ export const createDatabase = () => {
   };
   
   export const buscarCartas = async () => {
-    const db = getDb();
+    const db = await openDatabase();
   
     try {
       const result = await db.getAllAsync(`SELECT * FROM cartas`);
@@ -248,6 +246,55 @@ export const createDatabase = () => {
     } catch (error) {
       console.error("❌ Erro ao buscar cartas:", error);
       return [];
+    }
+  };
+  
+  export const excluirCarta = async (id) => {
+    const db = await openDatabase();
+  
+    try {
+      await db.runAsync(`DELETE FROM cartas WHERE id = ?`, [id]);
+      console.log(`🗑️ Carta com id ${id} deletada com sucesso!`);
+    } catch (error) {
+      console.error(`❌ Erro ao deletar carta com id ${id}:`, error);
+    }
+  };
+  
+  export const atualizarCarta = async (carta) => {
+    const db =await openDatabase();
+  
+    try {
+      await db.runAsync(
+        `UPDATE cartas 
+         SET nome = ?, 
+             codigo = ?, 
+             colecao = ?, 
+             preco_compra = ?, 
+             data_compra = ?, 
+             quantidade = ?, 
+             raridade = ?, 
+             qualidade = ?, 
+             imagem = ?
+         WHERE id = ?`,
+        [
+          carta.nome,
+          carta.codigo,
+          carta.colecao,
+          carta.preco_compra,
+          carta.data_compra,
+          carta.quantidade,
+          carta.raridade,
+          carta.qualidade,
+          carta.imagem,
+          carta.id, // ← ID da carta que está sendo editada
+        ]
+      );
+  
+      console.log("✅ Carta atualizada com sucesso!");
+      Alert.alert("Sucesso", "Carta atualizada com sucesso!");
+    } catch (error) {
+      console.error("❌ Erro ao atualizar carta:", error);
+      Alert.alert("Erro", "Não foi possível atualizar a carta.");
     }
   };
   

@@ -5,7 +5,7 @@ export default function LinhasTabela({ data, onPress }) {
   return (
     <View style={styles.row}>
       {/* Célula de imagem da carta */}
-      <TouchableOpacity style={styles.cell} onPress={() => onPress(data.id, data.descricao, "Tipo")}>
+      <TouchableOpacity style={styles.cell} onPress={() => onPress(data,"Id")}>
         <Image
           source={{ uri: data.imagem }}
           style={styles.image}
@@ -14,12 +14,12 @@ export default function LinhasTabela({ data, onPress }) {
       </TouchableOpacity>
 
       {/* Nome da carta */}
-      <TouchableOpacity style={styles.cell} onPress={() => onPress(data.id, data.descricao, "Produtor")}>
+      <TouchableOpacity style={styles.cell} onPress={() => onPress(data, "Nome")}>
         <Text style={styles.text}>{String(data.nome).toUpperCase()}</Text>
       </TouchableOpacity>
 
       {/* Código da carta */}
-      <TouchableOpacity style={styles.cell} onPress={() => onPress(data.id, data.descricao, "Propriedade")}>
+      <TouchableOpacity style={styles.cell} onPress={() => onPress(data, "Código")}>
         <Text style={styles.text}>{String(data.codigo).toUpperCase()}</Text>
       </TouchableOpacity>
     </View>

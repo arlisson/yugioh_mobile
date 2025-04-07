@@ -75,27 +75,19 @@ export default function Home() {
 const [searchQuery, setSearchQuery] = useState(''); // Estado para armazenar o que o usuário digita na pesquisa
 const [filteredCartas, setFilteredCartas] = useState([]); // Estado para as Cartas filtradas
 const [cartas, setCartas] = useState([]);
-const db = openDatabase();
+
 
 useEffect(() => {
   (async () => {
+    //await deleteDatabase();
+    await openDatabase();
    //await createDatabase()
    
+   carregarCartas();
 
   })();
-
   
 }, []);
-
-useEffect(() => {
-  const carregarCartas = async () => {
-    const resultado = await buscarCartas();
-    setCartas(resultado);
-  };
-
-  carregarCartas();
-}, []);
-
 
 
 useEffect(() => {
@@ -118,13 +110,27 @@ useEffect(() => {
    } else {
      setFilteredCartas(cartas);
    }
- }, [searchQuery]);
+ }, [searchQuery,cartas]);
 
 const Cadastrar = () =>{
 
   router.push('(telas)/Cadastrar')
 }
- 
+
+const carregarCartas = async () => {
+  const resultado = await buscarCartas();
+  setCartas(resultado);
+  //console.log(resultado);
+};
+
+const handleSelected = (data) => {
+  router.push({
+    pathname: './(telas)/Editar',
+    params: { data: JSON.stringify(data) }, // <- aqui!
+  });
+};
+
+
 return (
    
    <View style={{ flex: 1 }}>
@@ -153,7 +159,8 @@ return (
       {filteredCartas.length > 0 ? (
           filteredCartas.map((item) => (
             <LinhasTabela key={item.id} 
-            data={item} 
+            data={item}
+            onPress={handleSelected}
             />
           ))
         ) : (
