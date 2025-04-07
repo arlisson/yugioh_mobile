@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text,TouchableOpacity,ScrollView,TextInput } from 'react-native';
+import { router } from 'expo-router';
 import Cabecalho from '../components/Cabecalho';
 import stylesGeral from '../assets/styles/stylesGeral';
 import HeaderTabela  from '../components/HeaderTabela';
@@ -94,6 +95,11 @@ useEffect(() => {
      setFilteredCartas(cartasExemplo);
    }
  }, [searchQuery]);
+
+const Cadastrar = () =>{
+
+  router.push('(telas)/Cadastrar')
+}
  
 return (
    
@@ -132,7 +138,8 @@ return (
 
 
       </ScrollView>
-      <Botao texto='Adicionar'/>
+      <Botao texto='Adicionar'
+      onPress={Cadastrar}/>
 
     </View>
 );

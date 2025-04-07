@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     alignItems: "center", // 🔹 Centraliza os textos verticalmente
   },
   headerText: {
-    fontSize:10,
+    fontSize:15,
     flex: 1,
     textAlign: "center",
     fontWeight: "bold",

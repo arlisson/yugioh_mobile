@@ -5,21 +5,21 @@ export default function LinhasTabela({ data, onPress }) {
   return (
     <View style={styles.row}>
       {/* Célula de imagem da carta */}
-      <TouchableOpacity style={styles.cell} onPress={() => onPress(data.id, data.foto, "Tipo")}>
+      <TouchableOpacity style={styles.cell} onPress={() => onPress(data.id, data.descricao, "Tipo")}>
         <Image
           source={{ uri: "https://a-static.mlcdn.com.br/1500x1500/cartao-yu-gi-oh-dragao-branco-de-olhos-azuis-ultra-raro/nocnoceua/aub01l9zv3d2/9179ae13046b5bf587fb5544bc5e4a90.jpeg" }}
           style={styles.image}
-          resizeMode="cover"
+          resizeMode="center"
         />
       </TouchableOpacity>
 
       {/* Nome da carta */}
-      <TouchableOpacity style={styles.cell} onPress={() => onPress(data.id, data.nome, "Produtor")}>
+      <TouchableOpacity style={styles.cell} onPress={() => onPress(data.id, data.descricao, "Produtor")}>
         <Text style={styles.text}>{String(data.nome).toUpperCase()}</Text>
       </TouchableOpacity>
 
       {/* Código da carta */}
-      <TouchableOpacity style={styles.cell} onPress={() => onPress(data.id, data.codigo, "Propriedade")}>
+      <TouchableOpacity style={styles.cell} onPress={() => onPress(data.id, data.descricao, "Propriedade")}>
         <Text style={styles.text}>{String(data.codigo).toUpperCase()}</Text>
       </TouchableOpacity>
     </View>
@@ -40,12 +40,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   text: {
-    fontSize: 9,
+    fontSize: 12,
     textAlign: "center",
   },
   image: {
-    width: 40,
-    height: 60,
+    width: 60,
+    height: 85,
     borderRadius: 4,
     backgroundColor: "#eee", // fallback caso a imagem demore a carregar
   },

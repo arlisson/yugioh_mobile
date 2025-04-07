@@ -2,10 +2,15 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function BotaoNovaCarta({ onPress, texto = 'Novo Botão' }) {
+export default function BotaoNovaCarta({ onPress, texto = 'Novo Botão', icone=true}) {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
+      {icone!=false?
       <Ionicons name="add-circle-outline" size={20} color="#fff" style={{ marginRight: 6 }} />
+      :
+      ''
+      }
+      
       <Text style={styles.text}>{texto}</Text>
     </TouchableOpacity>
   );
@@ -22,7 +27,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 16,
     elevation: 3,
-    width: '100%', // Agora ocupa toda a largura
+    width: '80%', // Agora ocupa toda a largura
+    alignSelf: 'center',
   },
   text: {
     color: '#fff',
