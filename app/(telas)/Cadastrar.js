@@ -3,6 +3,7 @@ import { View, Text,TouchableOpacity,ScrollView,TextInput, Image } from 'react-n
 import Cabecalho from '../../components/Cabecalho';
 import Botao from '../../components/Botao';
 import Body from '../../components/Body';
+import { inserirCarta } from '../DAO/database';
 
 export default function Cadastrar() {
    const [nome, setNome] = useState('');
@@ -30,7 +31,13 @@ export default function Cadastrar() {
      };
  
      console.log("Carta para salvar:", carta);
- 
+     try{
+      inserirCarta(carta);
+
+     }catch(error){
+      //console.log('Erro ao inserir Carta: ',error)
+     }
+     
      // Aqui você pode chamar a função inserirCarta(carta)
    };
  

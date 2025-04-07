@@ -7,7 +7,7 @@ export default function LinhasTabela({ data, onPress }) {
       {/* Célula de imagem da carta */}
       <TouchableOpacity style={styles.cell} onPress={() => onPress(data.id, data.descricao, "Tipo")}>
         <Image
-          source={{ uri: "https://a-static.mlcdn.com.br/1500x1500/cartao-yu-gi-oh-dragao-branco-de-olhos-azuis-ultra-raro/nocnoceua/aub01l9zv3d2/9179ae13046b5bf587fb5544bc5e4a90.jpeg" }}
+          source={{ uri: data.imagem }}
           style={styles.image}
           resizeMode="center"
         />
