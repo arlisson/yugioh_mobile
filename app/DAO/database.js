@@ -456,6 +456,17 @@ export const createDatabase = () => {
       throw error;
     }
   };
+
+  export const excluirVenda = async (id) => {
+    const db = await openDatabase();
+  
+    try {
+      await db.runAsync(`DELETE FROM vendas WHERE id = ?`, [id]);
+      console.log(`🗑️ Venda com id ${id} deletada com sucesso!`);
+    } catch (error) {
+      console.error(`❌ Erro ao deletar venda com id ${id}:`, error);
+    }
+  };
   
   
   

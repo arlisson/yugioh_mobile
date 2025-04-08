@@ -4,7 +4,12 @@ import Cabecalho from '../../components/Cabecalho';
 import Botao from '../../components/Botao';
 import Body from '../../components/Body';
 import { useLocalSearchParams } from 'expo-router';
-import { excluirCarta, atualizarCarta,inserirVenda,buscarVendas,atualizarQuantidadeCarta } from '../DAO/database'; 
+import { excluirCarta,
+  atualizarCarta,
+  inserirVenda,
+  buscarVendas,
+  atualizarQuantidadeCarta,
+  excluirVenda} from '../DAO/database'; 
 import { router } from 'expo-router';
 import Dialog from 'react-native-dialog';
 
@@ -98,6 +103,30 @@ const handleExcluir = () => {
           } catch (error) {
             console.error('Erro ao excluir carta:', error);
             Alert.alert('Erro', 'Não foi possível excluir a carta.');
+          }
+        },
+      },
+    ]
+  );
+};
+
+const handleExcluirVenda = () => {
+  Alert.alert(
+    'Confirmar exclusão',
+    'Tem certeza que deseja excluir esta Venda?',
+    [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Excluir',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await excluirVenda(carta.id); // `carta.id` deve ser o ID da carta atual
+            Alert.alert('Sucesso', 'Venda excluída com sucesso!');
+            router.back(); // ou navegar para outra tela se preferir
+          } catch (error) {
+            console.error('Erro ao excluir Visita:', error);
+            Alert.alert('Erro', 'Não foi possível excluir a Venda.');
           }
         },
       },
@@ -333,7 +362,12 @@ const confirmarQtd = () => {
       
       )}
 
+      {venda?
+      <Botao texto="Deletar" onPress={handleExcluirVenda} cor='red' foto='trash-outline'/>
+      :
       <Botao texto="Deletar" onPress={handleExcluir} cor='red' foto='trash-outline'/>
+      }
+      
     </View>
   );
 }

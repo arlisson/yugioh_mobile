@@ -6,9 +6,16 @@ import stylesGeral from '../../assets/styles/stylesGeral';
 import HeaderTabela  from '../../components/HeaderTabela';
 import LinhasTabela from '../../components/LinhasTabela';
 import Botao from '../../components/Botao';
-import {createDatabase,deleteDatabase, openDatabase, buscarVendas,calcularTotalGasto,calcularTotalVendido,calcularTotais} from '../DAO/database'
+import {createDatabase,
+  deleteDatabase,
+  openDatabase,
+  buscarVendas,
+  calcularTotalGasto,
+  calcularTotalVendido,
+  calcularTotais,
+  } from '../DAO/database'
 
-export default function Home() {   
+export default function HomeVendas() {   
     
 const [searchQuery, setSearchQuery] = useState(''); // Estado para armazenar o que o usuário digita na pesquisa
 const [filteredCartas, setFilteredCartas] = useState([]); // Estado para as Cartas filtradas
