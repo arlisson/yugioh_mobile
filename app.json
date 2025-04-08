@@ -1,21 +1,27 @@
 {
   "expo": {
-    "name": "yugioh_mobile",
+    "name": "Yu-Gi-Oh! Manager",
     "slug": "yugioh_mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/resized-icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#4A90E2"
+    },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#4A90E2"
+      },
+      "package": "com.arlisson234529.yugioh_mobile"
     },
     "web": {
       "bundler": "metro",
@@ -27,16 +33,22 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#4A90E2"
         }
       ],
       "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "6cc597da-60dd-4019-9238-b3da12650802"
+      }
+    },
+    "owner": "arlisson234529"
   }
 }

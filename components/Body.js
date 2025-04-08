@@ -29,6 +29,9 @@ export default function Body({
   raridade, setRaridade,
   qualidade, setQualidade,
   imagem, setImagem,
+  dataVenda, setDataVenda,
+  precoVenda, setPrecoVenda,
+  venda=false
  
 }) {
 
@@ -44,12 +47,9 @@ export default function Body({
   const [dataRaridade,setDataRaridade] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState('');
-  const [mostrarCalendario, setMostrarCalendario] = useState(false);
+  const [mostrarCalendarioCompra, setMostrarCalendarioCompra] = useState(false);
+  const [mostrarCalendarioVenda, setMostrarCalendarioVenda] = useState(false);
 
-  const handleSelecionarData = (data) => {
-    setDataCompra(data);
-    setMostrarCalendario(false); // Oculta após seleção
-  };
 
   const handleImagePress = () => {
     setNewImageUrl(imagem);
@@ -117,11 +117,18 @@ export default function Body({
             : require('../assets/images/verso.jpg') // ou qualquer imagem local
         }
         style={styles.image}
-        resizeMode="center"
+        resizeMode="cover"
       />
 
 
       </TouchableOpacity>
+      {!venda ?
+        <Text>Valor total: R$ {(parseFloat(precoCompra || 0) * (quantidade || 0)).toFixed(2)}</Text>
+      :
+        <Text>Valor total: R$ {(parseFloat(precoVenda || 0) * (quantidade || 0)).toFixed(2)}</Text>
+      }
+
+    
       <View style={styles.viewTitulos}>
       <Text style={styles.titulos}>Nome:</Text>
       </View>
@@ -132,17 +139,6 @@ export default function Body({
         value={nome}
         onChangeText={setNome}
       />
-      
-      <View style={styles.viewTitulos}>
-      <Text style={styles.titulos}>Código:</Text>
-      </View>
-      <TextInput
-        style={styles.input}
-        placeholder="Código"
-        value={codigo}
-        onChangeText={setCodigo}
-      />
-
 
       {/*Coleção*/}
       <View style={styles.viewTitulos}>
@@ -154,9 +150,10 @@ export default function Body({
           data={dataColecao}
           label="Coleção"
           value={getValueByLabel(colecao, dataColecao)} // <- transforma a label recebida em value
-          onChange={(value, label) => {
+          onChange={(value, label,codigo) => {
             setColecao(label); // você mantém a label no estado externo
-            console.log('Coleção selecionada:', label, 'Id - ', value);
+            setCodigo(codigo);
+            console.log('Coleção selecionada:', label, 'Id - ', value, 'Codigo: ',codigo);
           }}
         />            
       
@@ -198,9 +195,21 @@ export default function Body({
           <Ionicons name="trash-outline" size={24} color="red" />
         </TouchableOpacity>
       </View>
+      
+      <View style={styles.viewTitulos}>
+      <Text style={styles.titulos}>Código:</Text>
+      </View>
+      <TextInput
+        style={styles.input}
+        placeholder="Código"
+        value={codigo}
+        onChangeText={setCodigo}
+      />
+
+      
 
       <View style={styles.viewTitulos}>
-      <Text style={styles.titulos}>Preço Unitário:</Text>
+      <Text style={styles.titulos}>Preço Compra (unitário):</Text>
       </View>
       <TextInput
         style={styles.input}
@@ -219,21 +228,25 @@ export default function Body({
       <View style={{ width: '100%' }}>
             {/* Área que parece um TextInput */}
             <TouchableOpacity
-              onPress={() => setMostrarCalendario(!mostrarCalendario)} // Toggle
+              onPress={() => setMostrarCalendarioCompra(!mostrarCalendarioCompra)}
               style={styles.fakeInput}
             >
               <Text style={dataCompra ? styles.inputText : styles.placeholder}>
-                {dataCompra ? `Data: ${dataCompra}` : 'Data da Compra'}
+                {dataCompra ? dataCompra : 'Data da Compra'}
               </Text>
             </TouchableOpacity>
 
-            {/* Calendário visível apenas se mostrarCalendario for true */}
-            {mostrarCalendario && (
+            {mostrarCalendarioCompra && (
               <CampoCalendario
+              titulo={'Data da Compra'}
                 dataSelecionada={dataCompra}
-                setDataSelecionada={handleSelecionarData}
+                setDataSelecionada={(data) => {
+                  setDataCompra(data);
+                  setMostrarCalendarioCompra(false);
+                }}
               />
             )}
+
           </View>
       
       <View style={styles.viewTitulos}>
@@ -346,7 +359,56 @@ export default function Body({
         >
           <Ionicons name="trash-outline" size={24} color="red" />
         </TouchableOpacity>
+
+          
+          
       </View>
+        {venda?
+        <>
+          <View style={styles.viewTitulos}>
+          <Text style={styles.titulos}>Valor da Venda:</Text>
+          </View>
+          
+          <TextInput
+            style={styles.input}
+            placeholder="Preço da venda"
+            value={precoVenda}
+            onChangeText={setPrecoVenda}
+          />
+          {/*Calendário*/}
+
+          <View style={styles.viewTitulos}>
+          <Text style={styles.titulos}>Data da Venda:</Text>
+          </View>
+
+          <View style={{ width: '100%' }}>
+                {/* Área que parece um TextInput */}
+                <TouchableOpacity
+                    onPress={() => setMostrarCalendarioVenda(!mostrarCalendarioVenda)}
+                    style={styles.fakeInput}
+                  >
+                    <Text style={dataVenda ? styles.inputText : styles.placeholder}>
+                      {dataVenda ? dataVenda : 'Data da Venda'}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {mostrarCalendarioVenda && (
+                    <CampoCalendario
+                      titulo={'Data da Venda'}
+                      dataSelecionada={dataVenda}
+                      setDataSelecionada={(data) => {
+                        setDataVenda(data);
+                        setMostrarCalendarioVenda(false);
+                      }}
+                    />
+                  )}
+
+              </View>
+          </>
+          :''      
+      
+      }
+      
 
       {/* Modal para editar imagem */}
       <Modal visible={modalVisible} transparent animationType="slide">

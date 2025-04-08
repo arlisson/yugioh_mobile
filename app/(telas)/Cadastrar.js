@@ -53,6 +53,8 @@ export default function Cadastrar() {
 
   // 💾 Atualiza AsyncStorage sempre que algum valor muda
   useEffect(() => {
+
+  
     const persistirCampos = async () => {
       try {
         await AsyncStorage.setItem('@cadastro_nome', nome ?? '');

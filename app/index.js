@@ -19,7 +19,9 @@ return (
       <View style={styles.buttonGroup}>
         <Botao texto="Criar Banco" onPress={() => createDatabase()} />
         <Botao texto="Apagar Banco" cor="red" onPress={() => deleteDatabase()} foto={'trash-outline'}/>
-        <Botao texto="Tela Inicial" onPress={() => router.push('./Home')} foto={'home-outline'} />
+        <Botao texto="Tela Inicial" onPress={() => router.push('./(telas)/Home')} foto={'home-outline'} />
+        <Botao texto="Vendas" onPress={() => router.push('./(telas)/HomeVendas')} foto={'cash-outline'} cor='green' />
+       
       </View>
     </View>
 

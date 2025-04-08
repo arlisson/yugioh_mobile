@@ -71,7 +71,23 @@ export const createDatabase = () => {
 
         CREATE TABLE IF NOT EXISTS colecoes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        colecao TEXT NOT NULL
+        colecao TEXT NOT NULL,
+        codigo TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS vendas (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          nome TEXT NOT NULL,
+          codigo TEXT,
+          colecao TEXT,
+          preco_compra REAL,
+          data_compra TEXT,
+          quantidade INTEGER,
+          raridade TEXT,
+          qualidade TEXT,
+          imagem TEXT,
+          data_venda TEXT,
+          preco_venda REAL
         );
 
 
@@ -155,13 +171,13 @@ export const createDatabase = () => {
     }
   };
 
-  export const inserirColecao = async (colecao) => {
+  export const inserirColecao = async (colecao, codigo) => {
     const db = await openDatabase();
   
     try {
       db.runAsync(
-        `INSERT INTO colecoes (colecao) VALUES (?)`,
-        [colecao]
+        `INSERT INTO colecoes (colecao,codigo) VALUES (?,?)`,
+        [colecao,codigo]
       );
   
       console.log("✅ Coleção inserida com sucesso!");
@@ -210,6 +226,7 @@ export const createDatabase = () => {
       return result.map((row) => ({
         label: row.colecao,
         value: row.id,
+        codigo:row.codigo
       }));
     } catch (error) {
       console.error("❌ Erro ao buscar coleções:", error);
@@ -316,4 +333,130 @@ export const createDatabase = () => {
       Alert.alert("Erro", "Não foi possível atualizar a carta.");
     }
   };
+  
+  export const inserirVenda = async (venda) => {
+    const db = await openDatabase();
+  
+    try {
+      db.runAsync(
+        `INSERT INTO vendas (
+          nome, codigo, colecao, preco_compra, data_compra,
+          quantidade, raridade, qualidade, imagem,
+          data_venda, preco_venda
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          venda.nome,
+          venda.codigo,
+          venda.colecao,
+          venda.preco_compra,
+          venda.data_compra,
+          venda.quantidade,
+          venda.raridade,
+          venda.qualidade,
+          venda.imagem,
+          venda.data_venda,
+          venda.preco_venda,
+        ]
+      );
+  
+      console.log("✅ Venda inserida com sucesso!");
+      Alert.alert("Sucesso", "Venda registrada com sucesso!");
+    } catch (error) {
+      console.error("❌ Erro ao inserir venda:", error);
+      Alert.alert("Erro", "Não foi possível registrar a venda.");
+    }
+  };
+  
+
+  export const buscarVendas = async () => {
+    const db = await openDatabase();
+  
+    try {
+      const resultado = await db.getAllAsync(`SELECT * FROM vendas ORDER BY data_venda DESC`);
+      return resultado;
+    } catch (error) {
+      console.error("❌ Erro ao buscar vendas:", error);
+      return [];
+    }
+  };
+  
+  export const atualizarQuantidadeCarta = async (id, novaQuantidade) => {
+    const db = await openDatabase();
+  
+    try {
+      await db.runAsync(
+        `UPDATE cartas SET quantidade = ? WHERE id = ?`,
+        [novaQuantidade, id]
+      );
+      console.log(`✅ Quantidade da carta ${id} atualizada para ${novaQuantidade}`);
+    } catch (error) {
+      console.error("❌ Erro ao atualizar quantidade da carta:", error);
+      throw error;
+    }
+  };
+  
+  export const calcularTotalGasto = async () => {
+    const db = await openDatabase();
+  
+    try {
+      const result = await db.getFirstAsync(
+        `SELECT SUM(preco_compra * quantidade) AS total_gasto FROM cartas`
+      );
+  
+      const total = result?.total_gasto ?? 0;
+      //console.log(`💰 Total gasto: R$ ${total.toFixed(2)}`);
+      return total;
+    } catch (error) {
+      console.error("❌ Erro ao calcular total gasto:", error);
+      throw error;
+    }
+  };
+
+  export const calcularTotalVendido = async () => {
+    const db = await openDatabase();
+  
+    try {
+      const result = await db.getFirstAsync(
+        `SELECT SUM(preco_venda * quantidade) AS total_vendido FROM vendas`
+      );
+  
+      const total = result?.total_vendido ?? 0;
+      //console.log(`💰 Total vendido: R$ ${total.toFixed(2)}`);
+      return total;
+    } catch (error) {
+      console.error("❌ Erro ao calcular total vendido:", error);
+      throw error;
+    }
+  };
+  
+  export const calcularTotais = async () => {
+    const db = await openDatabase();
+  
+    try {
+      const [gastoCartas, gastoVendas, vendaInfo] = await Promise.all([
+        db.getFirstAsync(`SELECT SUM(preco_compra * quantidade) AS gasto_cartas FROM cartas`),
+        db.getFirstAsync(`SELECT SUM(preco_compra * quantidade) AS gasto_vendas FROM vendas`),
+        db.getFirstAsync(`SELECT SUM(preco_venda * quantidade) AS total_vendido FROM vendas`)
+      ]);
+  
+      const totalGastoCartas = gastoCartas?.gasto_cartas ?? 0;
+      const totalGastoVendas = gastoVendas?.gasto_vendas ?? 0;
+      const totalVendido = vendaInfo?.total_vendido ?? 0;
+  
+      const totalGasto = totalGastoCartas + totalGastoVendas;
+      const lucroTotal = totalVendido - totalGasto;
+  
+      return {
+        totalGasto,
+        totalVendido,
+        lucroTotal
+      };
+    } catch (error) {
+      console.error("❌ Erro ao calcular totais financeiros:", error);
+      throw error;
+    }
+  };
+  
+  
+  
   

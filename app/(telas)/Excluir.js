@@ -39,30 +39,46 @@ export default function Excluir() {
 
   const handleExcluir = async (id) => {
     if (!id) {
-      Alert.alert('Aviso', `Selecione um(a) ${label.toLowerCase()} para excluir.`);
+      Alert.alert('Aviso', `Selecione um(a) ${label.toLowerCase()} para excluir.`)
       return;
     }
-
-    try {
-      if (colecao) {
-        await excluirColecao(id);
-        router.back();
-      } else if (qualidade) {
-        await excluirQualidade(id);
-        router.back();
-      } else if (raridade) {
-        await excluirRaridade(id);
-        router.back();
-      }
-
-      Alert.alert('Sucesso', `${label} removida com sucesso!`);
-      setId(null);
-      setSelectedValue(null);
-    } catch (e) {
-      Alert.alert('Erro', `Falha ao excluir ${label}.`);
-      console.error(e);
-    }
+  
+    Alert.alert(
+      'Confirmar exclusão',
+      `Tem certeza que deseja excluir esta ${label.toLowerCase()}?`,
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              if (colecao) {
+                await excluirColecao(id);
+              } else if (qualidade) {
+                await excluirQualidade(id);
+              } else if (raridade) {
+                await excluirRaridade(id);
+              }
+  
+              Alert.alert('Sucesso', `${label} removida com sucesso!`);
+              setId(null);
+              setSelectedValue(null);
+              router.back();
+            } catch (e) {
+              Alert.alert('Erro', `Falha ao excluir ${label}.`);
+              console.error(e);
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
+  
 
   return (
     <View style={styles.container}>

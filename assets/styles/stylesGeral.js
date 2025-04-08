@@ -29,6 +29,25 @@ const stylesGeral = StyleSheet.create({
         color:"#fff",
          
     },
+    containerValores: {
+        flexDirection: 'row',
+        justifyContent: 'space-between', // ou 'space-around' se quiser mais espaço
+        flexWrap: 'wrap', // permite quebrar linha em telas menores
+        padding: 10,
+        gap: 8, // se estiver usando React Native 0.71+
+      },
+      textoValor: {
+        fontSize: 16,
+        fontWeight: '500',
+        marginRight: 8,
+      },
+      lucroPositivo: {
+        color: 'green',
+      },
+      lucroNegativo: {
+        color: 'red',
+      },
+      
 
 }) ;
 
