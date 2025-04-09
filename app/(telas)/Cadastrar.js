@@ -130,7 +130,7 @@ export default function Cadastrar() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Cabecalho seta={true} title="Cadastrar Carta" />
+      <Cabecalho seta={true} title="Cadastrar Carta" home={true} />
       <ScrollView>
         <Body
           nome={nome}
