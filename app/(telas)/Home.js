@@ -76,27 +76,37 @@ const carregarValoresAtuais = async (cartas) => {
   const resultados = await Promise.all(
     cartas.map(async (carta) => {
       if (!carta.link) {
-        return { id: carta.id, preco: '-' };
+        return { id: carta.id, valor: null };
       }
 
       try {
         const resultado = await scrapeCheerio(carta.link);
-        return { id: carta.id, preco: resultado?.precoFormatado || 'R$ 0,00' };
+        return {
+          id: carta.id,
+          valor: {
+            precoNumber: resultado?.precoNumber ?? null,
+            precoFormatado: resultado?.precoFormatado ?? 'R$ 0,00'
+          }
+        };
       } catch (error) {
         console.warn(`Erro ao buscar preço da carta ${carta.nome}:`, error.message);
-        return { id: carta.id, preco: 'Erro' };
+        return { id: carta.id, valor: null };
       }
     })
   );
 
-  // Transforma array em objeto { [id]: preco }
+  // transforma em objeto { [id]: valor }
   const valoresObj = resultados.reduce((acc, item) => {
-    acc[item.id] = item.preco;
+    acc[item.id] = item.valor;
     return acc;
   }, {});
 
   setValoresAtuais(valoresObj);
+  console.log("VALOR ATUAL", item.id, valoresAtuais[item.id]);
+
 };
+
+
 
 
 const handleSelected = (data) => {

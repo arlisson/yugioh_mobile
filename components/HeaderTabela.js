@@ -6,8 +6,10 @@ export default function HeaderTabela() {
     <View style={styles.headerContainer}>
       <Text style={styles.headerText}>Imagem</Text>
       <Text style={styles.headerText}>Nome</Text>
-      <Text style={styles.headerText}>Código</Text>  
-      <Text style={styles.headerText}>Valor Atual</Text>      
+      <Text style={styles.headerText}>Código</Text> 
+      <Text style={styles.headerText}>Valor Pago</Text>   
+      <Text style={styles.headerText}>Valor Atual</Text>  
+      <Text style={styles.headerText}>Lucro</Text>  
           
       
     </View>
@@ -23,7 +25,7 @@ const styles = StyleSheet.create({
     alignItems: "center", // 🔹 Centraliza os textos verticalmente
   },
   headerText: {
-    fontSize:15,
+    fontSize:12,
     flex: 1,
     textAlign: "center",
     fontWeight: "bold",
