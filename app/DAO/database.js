@@ -56,7 +56,8 @@ export const createDatabase = () => {
         quantidade INTEGER,
         raridade TEXT,
         qualidade TEXT,
-        imagem TEXT
+        imagem TEXT,
+        link TEXT
         );
 
         CREATE TABLE IF NOT EXISTS qualidades (
@@ -86,6 +87,7 @@ export const createDatabase = () => {
           raridade TEXT,
           qualidade TEXT,
           imagem TEXT,
+          link TEXT,
           data_venda TEXT,
           preco_venda REAL
         );
@@ -114,8 +116,8 @@ export const createDatabase = () => {
       db.runAsync(
         `INSERT INTO cartas (
           nome, codigo, colecao, preco_compra, data_compra,
-          quantidade, raridade, qualidade, imagem
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          quantidade, raridade, qualidade, imagem, link
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           carta.nome,
           carta.codigo,
@@ -126,6 +128,7 @@ export const createDatabase = () => {
           carta.raridade,
           carta.qualidade,
           carta.imagem,
+          carta.link,
         ]
       );
   
@@ -278,6 +281,7 @@ export const createDatabase = () => {
   
     try {
       const result = await db.getAllAsync(`SELECT * FROM cartas`);
+      console.log('Cartas no banco',result);
       return result;
     } catch (error) {
       console.error("❌ Erro ao buscar cartas:", error);
@@ -310,7 +314,8 @@ export const createDatabase = () => {
              quantidade = ?, 
              raridade = ?, 
              qualidade = ?, 
-             imagem = ?
+             imagem = ?,
+             link = ?
          WHERE id = ?`,
         [
           carta.nome,
@@ -322,6 +327,7 @@ export const createDatabase = () => {
           carta.raridade,
           carta.qualidade,
           carta.imagem,
+          carta.link,
           carta.id, // ← ID da carta que está sendo editada
         ]
       );
@@ -341,9 +347,9 @@ export const createDatabase = () => {
       db.runAsync(
         `INSERT INTO vendas (
           nome, codigo, colecao, preco_compra, data_compra,
-          quantidade, raridade, qualidade, imagem,
+          quantidade, raridade, qualidade, imagem, link,
           data_venda, preco_venda
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           venda.nome,
           venda.codigo,
@@ -354,6 +360,7 @@ export const createDatabase = () => {
           venda.raridade,
           venda.qualidade,
           venda.imagem,
+          venda.link,
           venda.data_venda,
           venda.preco_venda,
         ]
@@ -367,6 +374,49 @@ export const createDatabase = () => {
     }
   };
   
+  export const atualizarVenda = async (carta) => {
+    const db =await openDatabase();
+  
+    try {
+      await db.runAsync(
+        `UPDATE vendas
+         SET nome = ?, 
+             codigo = ?, 
+             colecao = ?, 
+             preco_compra = ?, 
+             data_compra = ?, 
+             quantidade = ?, 
+             raridade = ?, 
+             qualidade = ?, 
+             imagem = ?,
+             link = ?,
+             data_venda =?,
+             preco_venda =?
+         WHERE id = ?`,
+        [
+          carta.nome,
+          carta.codigo,
+          carta.colecao,
+          carta.preco_compra,
+          carta.data_compra,
+          carta.quantidade,
+          carta.raridade,
+          carta.qualidade,
+          carta.imagem,
+          carta.link,
+          carta.data_venda,
+          carta.preco_venda,
+          carta.id, // ← ID da carta que está sendo editada
+        ]
+      );
+  
+      console.log("✅ Venda atualizada com sucesso!");
+      Alert.alert("Sucesso", "Venda atualizada com sucesso!");
+    } catch (error) {
+      console.error("❌ Erro ao atualizar venda:", error);
+      Alert.alert("Erro", "Não foi possível atualizar a venda.");
+    }
+  };
 
   export const buscarVendas = async () => {
     const db = await openDatabase();

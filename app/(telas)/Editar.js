@@ -9,7 +9,8 @@ import { excluirCarta,
   inserirVenda,
   buscarVendas,
   atualizarQuantidadeCarta,
-  excluirVenda} from '../DAO/database'; 
+  excluirVenda,
+  atualizarVenda} from '../DAO/database'; 
 import { router } from 'expo-router';
 import Dialog from 'react-native-dialog';
 
@@ -30,6 +31,7 @@ export default function Editar() {
   const [precoVenda, setPrecoVenda] = useState('');
   const [quantidadeVendida, setQuantidadeVendida] = useState('');
   const [dataVenda,setDataVenda] = useState('');
+  const [link,setLink] = useState('');
   const scheme = useColorScheme();
   const isDark = scheme === 'dark';
   const textoCor = isDark ? 'black' : 'white';
@@ -51,6 +53,7 @@ useEffect(() => {
     setRaridade(carta.raridade || '');
     setQualidade(carta.qualidade || '');
     setImagem(carta.imagem || '');
+    setLink(carta.link || 0);
   }
 
   if (data && venda) {
@@ -68,6 +71,7 @@ useEffect(() => {
     setImagem(carta.imagem || '');
     setPrecoVenda(String(carta.preco_venda||''));
     setDataVenda(carta.data_venda || '');
+    setLink(carta.link || 0);
 
   }
  
@@ -145,7 +149,7 @@ const handleSalvar = async () => {
   if (!quantidade || quantidade <= 0) return Alert.alert('Erro', 'A quantidade deve ser maior que 0.');
   if (!raridade) return Alert.alert('Erro', 'Selecione uma raridade.');
   if (!qualidade) return Alert.alert('Erro', 'Selecione uma qualidade.');
-  if (!imagem.trim() || !isValidURL(imagem)) return Alert.alert('Erro', 'Informe uma URL de imagem válida.');
+  //if (!imagem.trim() || !isValidURL(imagem)) return Alert.alert('Erro', 'Informe uma URL de imagem válida.');
 
   const cartas = {
     id: carta.id, // ← Certifique-se que está sendo definido corretamente
@@ -158,6 +162,7 @@ const handleSalvar = async () => {
     raridade,
     qualidade,
     imagem,
+    link
   };
 
   Alert.alert(
@@ -177,6 +182,59 @@ const handleSalvar = async () => {
             // router.back(); // se quiser voltar após salvar
           } catch (error) {
             console.error('Erro ao atualizar carta:', error);
+            //Alert.alert('Erro', 'Não foi possível atualizar a carta.');
+          }
+        },
+      },
+    ],
+    { cancelable: false }
+  );
+};
+
+const handleAtualizarVenda = async () => {
+  if (!nome.trim()) return Alert.alert('Erro', 'Preencha o nome da carta.');
+  if (!codigo.trim()) return Alert.alert('Erro', 'Preencha o código.');
+  if (!colecao) return Alert.alert('Erro', 'Selecione uma coleção.');
+  if (!precoCompra || isNaN(precoCompra) || parseFloat(precoCompra) <= 0)
+    return Alert.alert('Erro', 'Informe um preço válido (maior que 0).');
+  if (!dataCompra.trim()) return Alert.alert('Erro', 'Informe a data da compra.');
+  if (!quantidade || quantidade <= 0) return Alert.alert('Erro', 'A quantidade deve ser maior que 0.');
+  if (!raridade) return Alert.alert('Erro', 'Selecione uma raridade.');
+  if (!qualidade) return Alert.alert('Erro', 'Selecione uma qualidade.');
+  //if (!imagem.trim() || !isValidURL(imagem)) return Alert.alert('Erro', 'Informe uma URL de imagem válida.');
+
+  const cartas = {
+    id: carta.id, // ← Certifique-se que está sendo definido corretamente
+    nome,
+    codigo,
+    colecao,
+    preco_compra: parseFloat(precoCompra) ||0,
+    data_compra: dataCompra,
+    quantidade,
+    raridade,
+    qualidade,
+    imagem,
+    link
+  };
+  console.log('Carta sendo atualizada: ',cartas);
+
+  Alert.alert(
+    'Confirmar atualização',
+    'Tem certeza que deseja atualizar esta venda?',
+    [
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+      {
+        text: 'Atualizar',
+        onPress: async () => {
+          try {
+            await atualizarVenda(cartas);
+            //Alert.alert('Sucesso', 'Carta atualizada com sucesso!');
+            // router.back(); // se quiser voltar após salvar
+          } catch (error) {
+            console.error('Erro ao atualizar venda:', error);
             //Alert.alert('Erro', 'Não foi possível atualizar a carta.');
           }
         },
@@ -286,6 +344,8 @@ const confirmarQtd = () => {
           setDataVenda={setDataVenda}
           precoVenda={precoVenda}
           setPrecoVenda={setPrecoVenda}
+          link={link}
+          setLink={setLink}
           
         />
         :
@@ -308,6 +368,8 @@ const confirmarQtd = () => {
           setQualidade={setQualidade}
           imagem={imagem}
           setImagem={setImagem}
+          link={link}
+          setLink={setLink}
           
         />
         
@@ -315,10 +377,17 @@ const confirmarQtd = () => {
         }
         
       </ScrollView>
-      <Botao texto="Editar" onPress={handleSalvar} foto='create-outline'/>
-      {!venda && (
-          <Botao texto="Vender" onPress={handleVender} cor="green" foto="cash-outline" />
-        )}
+     
+
+        {!venda?
+          <>
+            <Botao texto="Editar Carta" onPress={handleSalvar} foto="create-outline" />
+            <Botao texto="Vender" onPress={handleVender} cor="green" foto="cash-outline" />
+            </>
+          :
+          <Botao texto="Editar Venda" onPress={handleAtualizarVenda} foto="create-outline" />
+        }
+
 
 
       {/* Diálogo de Preço */}
@@ -363,9 +432,9 @@ const confirmarQtd = () => {
       )}
 
       {venda?
-      <Botao texto="Deletar" onPress={handleExcluirVenda} cor='red' foto='trash-outline'/>
+      <Botao texto="Deletar Venda" onPress={handleExcluirVenda} cor='red' foto='trash-outline'/>
       :
-      <Botao texto="Deletar" onPress={handleExcluir} cor='red' foto='trash-outline'/>
+      <Botao texto="Deletar Carta" onPress={handleExcluir} cor='red' foto='trash-outline'/>
       }
       
     </View>

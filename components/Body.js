@@ -14,6 +14,7 @@ import DropDownComponent from './DropDownComponent';
 import { Ionicons } from '@expo/vector-icons';
 import ContadorQuantidade from './Contador';
 import { buscarColecoes,buscarQualidades,buscarRaridades } from '../app/DAO/database';
+import scrapeCheerio from '../components/scrapeCheerio';
 
 import CampoCalendario from './Calendario';
 
@@ -31,6 +32,7 @@ export default function Body({
   imagem, setImagem,
   dataVenda, setDataVenda,
   precoVenda, setPrecoVenda,
+  link, setLink,
   venda=false
  
 }) {
@@ -49,20 +51,35 @@ export default function Body({
   const [newImageUrl, setNewImageUrl] = useState('');
   const [mostrarCalendarioCompra, setMostrarCalendarioCompra] = useState(false);
   const [mostrarCalendarioVenda, setMostrarCalendarioVenda] = useState(false);
-
+  const [info, setInfo] = useState(null);
 
   const handleImagePress = () => {
     setNewImageUrl(imagem);
     setModalVisible(true);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (newImageUrl && newImageUrl.trim() !== '') {
-      setImagem(newImageUrl);
+      try {
+        const dados = await scrapeCheerio(newImageUrl);
+
+        if (dados) {
+          if (dados.nome) setNome(dados.nome);
+          //if (dados.precoFormatado) setPrecoCompra(dados.precoFormatado.replace('R$', '').trim());
+          if (dados.imagem) setImagem(dados.imagem);
+          //if (dados.data) setDataCompra(dados.data);
+          setLink(newImageUrl);
+        } else {
+          alert('Não foi possível obter as informações da carta.');
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados com scrapeCheerio:", error);
+        alert("Erro ao buscar dados da carta.");
+      }
     }
+
     setModalVisible(false);
   };
-  
   const fetchColecao= async () => {
     try {
       const data = await buscarColecoes();
@@ -105,7 +122,6 @@ export default function Body({
     return found ? found.value : null;
   };
 
-
   return (
     <View style={styles.container}>
       {/* Imagem clicável */}
@@ -128,6 +144,27 @@ export default function Body({
         <Text>Valor total: R$ {(parseFloat(precoVenda || 0) * (quantidade || 0)).toFixed(2)}</Text>
       }
 
+        <View style={styles.viewTitulos}>
+          <Text style={styles.titulos}>Link da MYP:</Text>
+        </View>
+
+        <View style={styles.linkRow}>
+          <TextInput
+            style={[styles.input, { flex: 1, marginRight: 8 }]}
+            placeholder="Link da MYP"
+            value={link}
+            onChangeText={(text) => {
+              setNewImageUrl(text);
+              setLink(text);
+            }}
+            
+          />
+          <TouchableOpacity style={styles.botaoBuscar} onPress={handleConfirm}>
+            <Text style={styles.textoBotaoBuscar}>Buscar</Text>
+          </TouchableOpacity>
+        </View>
+
+      
     
       <View style={styles.viewTitulos}>
       <Text style={styles.titulos}>Nome:</Text>
@@ -411,11 +448,11 @@ export default function Body({
       
 
       {/* Modal para editar imagem */}
-      <Modal visible={modalVisible} transparent animationType="slide">
+      {/* <Modal visible={modalVisible} transparent animationType="slide">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>
-              URL da nova imagem
+              URL pagina da MYP
             </Text>
             <TextInput
               style={styles.input}
@@ -427,7 +464,7 @@ export default function Body({
             <Button title="Cancelar" color="gray" onPress={() => setModalVisible(false)} />
           </View>
         </View>
-      </Modal>
+      </Modal> */}
     </View>
   );
 }
@@ -503,5 +540,24 @@ const styles = StyleSheet.create({
   },
   viewTitulos:{
     alignSelf:'flex-start'
-  }
+  },
+  linkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    width: '100%',
+  },
+  
+  botaoBuscar: {
+    backgroundColor: '#4A90E2',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  
+  textoBotaoBuscar: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  
 });

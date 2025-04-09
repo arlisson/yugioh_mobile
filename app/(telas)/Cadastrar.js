@@ -16,6 +16,7 @@ export default function Cadastrar() {
   const [raridade, setRaridade] = useState('');
   const [qualidade, setQualidade] = useState('');
   const [imagem, setImagem] = useState('');
+  const [link, setLink] = useState('');
 
   const campos = {
     nome: [nome, setNome],
@@ -27,6 +28,7 @@ export default function Cadastrar() {
     raridade: [raridade, setRaridade],
     qualidade: [qualidade, setQualidade],
     imagem: [imagem, setImagem],
+    link: [link,setLink],
   };
 
   const isValidURL = (string) => {
@@ -66,13 +68,14 @@ export default function Cadastrar() {
         await AsyncStorage.setItem('@cadastro_raridade', raridade ?? '');
         await AsyncStorage.setItem('@cadastro_qualidade', qualidade ?? '');
         await AsyncStorage.setItem('@cadastro_imagem', imagem ?? '');
+        await AsyncStorage.setItem('@cadastro_link', link ?? '');
       } catch (e) {
         console.error('❌ Erro ao salvar campos no AsyncStorage:', e);
       }
     };
   
     persistirCampos();
-  }, [nome, codigo, colecao, precoCompra, dataCompra, quantidade, raridade, qualidade, imagem]);
+  }, [nome, codigo, colecao, precoCompra, dataCompra, quantidade, raridade, qualidade, imagem, link]);
   
 
   
@@ -87,7 +90,7 @@ export default function Cadastrar() {
     if (!quantidade || quantidade <= 0) return Alert.alert('Erro', 'A quantidade deve ser maior que 0.');
     if (!raridade) return Alert.alert('Erro', 'Selecione uma raridade.');
     if (!qualidade) return Alert.alert('Erro', 'Selecione uma qualidade.');
-    if (!imagem.trim() || !isValidURL(imagem)) return Alert.alert('Erro', 'Informe uma URL de imagem válida.');
+    //if (!imagem.trim() || !isValidURL(imagem)) return Alert.alert('Erro', 'Informe uma URL de imagem válida.');
 
     const carta = {
       nome,
@@ -99,7 +102,9 @@ export default function Cadastrar() {
       raridade,
       qualidade,
       imagem,
+      link,
     };
+    console.log(carta);
 
     Alert.alert(
       'Confirmação',
@@ -151,6 +156,8 @@ export default function Cadastrar() {
           setQualidade={setQualidade}
           imagem={imagem}
           setImagem={setImagem}
+          setLink={setLink}
+          link={link}
         />
       </ScrollView>
       <Botao texto="Salvar" onPress={handleSalvar} />

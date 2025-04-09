@@ -13,7 +13,9 @@ import {createDatabase,
   calcularTotalGasto,
   calcularTotalVendido,
   calcularTotais,
-  } from '../DAO/database'
+  } from '../DAO/database';
+
+import scrapeCheerio from '../../components/scrapeCheerio';
 
 export default function HomeVendas() {   
     
@@ -23,6 +25,7 @@ const [cartas, setCartas] = useState([]);
 const [totalGasto,setTotalGasto] = useState(null);
 const [totalVendido,setTotalVendido] = useState(null);
 const [lucroTotal, setLucroTotal] = useState(null);
+const [valoresAtuais, setValoresAtuais] = useState({});
 
 useEffect(() => {
   (async () => {
@@ -68,7 +71,34 @@ const Cadastrar = () =>{
 const carregarCartas = async () => {
   const resultado = await buscarVendas();
   setCartas(resultado);
+  await carregarValoresAtuais(resultado); // ⬅ adiciona esta linha
   //console.log(resultado);
+};
+
+const carregarValoresAtuais = async (cartas) => {
+  const resultados = await Promise.all(
+    cartas.map(async (carta) => {
+      if (!carta.link) {
+        return { id: carta.id, preco: '-' };
+      }
+
+      try {
+        const resultado = await scrapeCheerio(carta.link);
+        return { id: carta.id, preco: resultado?.precoFormatado || 'R$ 0,00' };
+      } catch (error) {
+        console.warn(`Erro ao buscar preço da carta ${carta.nome}:`, error.message);
+        return { id: carta.id, preco: 'Erro' };
+      }
+    })
+  );
+
+  // Transforma array em objeto { [id]: preco }
+  const valoresObj = resultados.reduce((acc, item) => {
+    acc[item.id] = item.preco;
+    return acc;
+  }, {});
+
+  setValoresAtuais(valoresObj);
 };
 
 const handleSelected = (data) => {
@@ -138,6 +168,7 @@ return (
             <LinhasTabela key={item.id} 
             data={item}
             onPress={handleSelected}
+            valorAtual={valoresAtuais[item.id]}
             />
           ))
         ) : (

@@ -6,7 +6,9 @@ export default function HeaderTabela() {
     <View style={styles.headerContainer}>
       <Text style={styles.headerText}>Imagem</Text>
       <Text style={styles.headerText}>Nome</Text>
-      <Text style={styles.headerText}>Código</Text>      
+      <Text style={styles.headerText}>Código</Text>  
+      <Text style={styles.headerText}>Valor Atual</Text>      
+          
       
     </View>
   );

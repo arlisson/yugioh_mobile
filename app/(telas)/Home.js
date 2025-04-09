@@ -7,6 +7,7 @@ import HeaderTabela  from '../../components/HeaderTabela';
 import LinhasTabela from '../../components/LinhasTabela';
 import Botao from '../../components/Botao';
 import {createDatabase,deleteDatabase, openDatabase, buscarCartas,calcularTotalGasto,calcularTotalVendido,calcularTotais} from '../DAO/database'
+import scrapeCheerio from '../../components/scrapeCheerio';
 
 export default function Home() {   
     
@@ -16,6 +17,8 @@ const [cartas, setCartas] = useState([]);
 const [totalGasto,setTotalGasto] = useState(null);
 const [totalVendido,setTotalVendido] = useState(null);
 const [lucroTotal, setLucroTotal] = useState(null);
+const [valoresAtuais, setValoresAtuais] = useState({});
+
 
 useEffect(() => {
   (async () => {
@@ -27,6 +30,7 @@ useEffect(() => {
     //console.log(await calcularTotais());
     carregarCartas();
     carregarTotais();
+    
 
 
   })();
@@ -64,8 +68,36 @@ const Cadastrar = () =>{
 const carregarCartas = async () => {
   const resultado = await buscarCartas();
   setCartas(resultado);
+  await carregarValoresAtuais(resultado); // ⬅ adiciona esta linha
   //console.log(resultado);
 };
+
+const carregarValoresAtuais = async (cartas) => {
+  const resultados = await Promise.all(
+    cartas.map(async (carta) => {
+      if (!carta.link) {
+        return { id: carta.id, preco: '-' };
+      }
+
+      try {
+        const resultado = await scrapeCheerio(carta.link);
+        return { id: carta.id, preco: resultado?.precoFormatado || 'R$ 0,00' };
+      } catch (error) {
+        console.warn(`Erro ao buscar preço da carta ${carta.nome}:`, error.message);
+        return { id: carta.id, preco: 'Erro' };
+      }
+    })
+  );
+
+  // Transforma array em objeto { [id]: preco }
+  const valoresObj = resultados.reduce((acc, item) => {
+    acc[item.id] = item.preco;
+    return acc;
+  }, {});
+
+  setValoresAtuais(valoresObj);
+};
+
 
 const handleSelected = (data) => {
   router.push({
@@ -136,6 +168,7 @@ return (
             <LinhasTabela key={item.id} 
             data={item}
             onPress={handleSelected}
+            valorAtual={valoresAtuais[item.id]}
             />
           ))
         ) : (

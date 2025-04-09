@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 
-export default function LinhasTabela({ data, onPress }) {
+export default function LinhasTabela({ data, onPress,valorAtual }) {
   return (
     <View style={styles.row}>
       {/* Célula de imagem da carta */}
@@ -22,6 +22,14 @@ export default function LinhasTabela({ data, onPress }) {
       <TouchableOpacity style={styles.cell} onPress={() => onPress(data, "Código")}>
         <Text style={styles.text}>{String(data.codigo).toUpperCase()}</Text>
       </TouchableOpacity>
+      {/* Valor Atual da Carta */}
+      <TouchableOpacity style={styles.cell} onPress={() => onPress(data, "ValorAtual")}>
+        <Text style={[styles.text, { color: '#4A90E2', fontWeight: 'bold' }]}>
+          {valorAtual || '...'}
+        </Text>
+      </TouchableOpacity>
+
+      
     </View>
   );
 }

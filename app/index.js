@@ -3,11 +3,13 @@ import { View, Text,TouchableOpacity,ScrollView,TextInput,StyleSheet } from 'rea
 import { router } from 'expo-router';
 import Cabecalho from '../components/Cabecalho';
 import Botao from '../components/Botao';
-import {createDatabase,deleteDatabase, openDatabase, buscarCartas} from './DAO/database'
+import {createDatabase,deleteDatabase, openDatabase, buscarCartas} from './DAO/database';
+import scrapeCheerio from '../components/scrapeCheerio';
 
 
 export default function Index() {   
 
+  //scrapeCheerio('https://mypcards.com/yugioh/produto/249214/yubel');
 
 return (
    
