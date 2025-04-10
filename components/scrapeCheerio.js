@@ -14,7 +14,7 @@ export default async function scrapeCheerio(url, raridadeAlvo = "Common") {
     const $ = cheerio.load(html);
 
     // Nome da carta
-    const nome = $('li.active').first().text().trim() || 'N/A';
+    const nome = $('li.active').first().text().trim() || 'Sem Nome';
 
     // Preço bruto geral da página
     const precoRaw = $('span.moeda').first().text().trim() || 'R$ 0,00';
@@ -33,17 +33,21 @@ export default async function scrapeCheerio(url, raridadeAlvo = "Common") {
     const colecao = $('#produto-codigo [title]').attr('title')?.trim() || 'Sem código';
     // Código da carta via texto do label "Código"
     let codigoTexto = null;
+    let codigoCarta = null;
     $('#produto-codigo label').each((_, label) => {
       const texto = $(label).text().trim();
       if (texto.includes("Código")) {
         const parent = $(label).parent();
         // Busca o texto relevante após o label (ex: em um <span> ou texto direto)
         const valor = parent.text().replace("Código", "").trim();
-        if (valor) codigoTexto = valor;
+        if (valor) {
+          codigoTexto = valor 
+          codigoCarta = codigoTexto.split('_')[1]
+        }
       }
     });
 
-    const codigoCarta = codigoTexto.split('_')[1];
+    
 
     // 🔍 Código limpo (ex: "ra03-en")
     let codigoLimpo = null;

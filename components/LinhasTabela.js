@@ -11,7 +11,7 @@ export default function LinhasTabela({ data, onPress, valorAtual }) {
   return (
     <View style={styles.row}>
       {/* Célula com nome acima da imagem */}
-      <TouchableOpacity style={styles.cell} onPress={() => onPress(data, "Id")}>
+      <TouchableOpacity style={styles.cell} onPress={() => onPress(data, "Nome")}>
         <View style={{ alignItems: "center" }}>
           <Text style={styles.cardName}>{String(data.nome).toUpperCase()}</Text>
           <Image

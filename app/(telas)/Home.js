@@ -18,6 +18,27 @@ const [totalGasto,setTotalGasto] = useState(null);
 const [totalVendido,setTotalVendido] = useState(null);
 const [lucroTotal, setLucroTotal] = useState(null);
 const [valoresAtuais, setValoresAtuais] = useState({});
+const [lucroAtual, setLucroAtual] = useState(null);
+
+
+useEffect(() => {
+  if (!cartas.length || !Object.keys(valoresAtuais).length) return;
+
+  let totalLucro = 0;
+
+  cartas.forEach((carta) => {
+    const precoPago = carta.preco_compra ?? 0;
+    const precoAtual = valoresAtuais[carta.id]?.precoNumber ?? null;
+
+    if (precoAtual !== null) {
+      totalLucro += precoAtual - precoPago;
+    }
+  });
+
+  setLucroAtual(totalLucro);
+}, [valoresAtuais, cartas]);
+
+
 
 
 useEffect(() => {
@@ -169,6 +190,17 @@ return (
           >
             Lucro Vendas: R$ {totalVendido != null && totalGasto != null ? lucroTotal.toFixed(2) : 'Carregando...'}
           </Text>
+
+          <Text
+            style={[
+              stylesGeral.textoValor,
+              lucroAtual >= 0 ? stylesGeral.lucroPositivo : stylesGeral.lucroNegativo
+            ]}
+          >
+            Lucro Compra: R$ {lucroAtual != null ? lucroAtual.toFixed(2) : 'Carregando...'}
+          </Text>
+
+
         </View>
 
         <HeaderTabela/>
