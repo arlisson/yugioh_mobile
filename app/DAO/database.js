@@ -157,6 +157,24 @@ export const createDatabase = () => {
     }
   };
 
+  export const editarQualidade = async (id,qualidade) => {
+    const db = await openDatabase();
+  
+    try {
+      await db.runAsync(
+        `UPDATE qualidades SET qualidade = ? WHERE id = ?`,
+        [qualidade, id]
+      );
+  
+      console.log("✅ Qualidade atualizada com sucesso!");
+      Alert.alert("Sucesso", "Qualidade atualizada com sucesso!");
+    } catch (error) {
+      console.error("❌ Erro ao atualizar qualidade:", error);
+      Alert.alert("Erro", "Não foi possível atualizar a qualidade.");
+    }
+  };
+  
+
   export const inserirRaridade = async (raridade) => {
     const db = await openDatabase();
   
@@ -174,6 +192,27 @@ export const createDatabase = () => {
     }
   };
 
+
+  export const editarRaridade = async (id, raridade) => {
+    const db = await openDatabase();
+  
+    try {
+      await db.runAsync(
+        `UPDATE raridades SET raridade = ? WHERE id = ?`,
+        [raridade, id]
+      );
+  
+      console.log("✅ Raridade atualizada com sucesso!");
+      Alert.alert("Sucesso", "Raridade atualizada com sucesso!");
+    } catch (error) {
+      console.error("❌ Erro ao atualizar raridade:", error);
+      Alert.alert("Erro", "Não foi possível atualizar a raridade.");
+    }
+  };
+  
+
+
+
   export const inserirColecao = async (colecao, codigo) => {
     const db = await openDatabase();
   
@@ -190,6 +229,24 @@ export const createDatabase = () => {
       Alert.alert("Erro", "Não foi possível inserir a coleção.");
     }
   };
+
+  export const editarColecao = async (id, colecao, codigo) => {
+    const db = await openDatabase();
+  
+    try {
+      await db.runAsync(
+        `UPDATE colecoes SET colecao = ?, codigo = ? WHERE id = ?`,
+        [colecao, codigo, id]
+      );
+  
+      console.log("✅ Coleção atualizada com sucesso!");
+      Alert.alert("Sucesso", "Coleção atualizada com sucesso!");
+    } catch (error) {
+      console.error("❌ Erro ao atualizar coleção:", error);
+      Alert.alert("Erro", "Não foi possível atualizar a coleção.");
+    }
+  };
+  
 
   export const buscarQualidades = async () => {
     const db = await openDatabase();

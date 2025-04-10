@@ -4,8 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 export default function HeaderTabela() {
   return (
     <View style={styles.headerContainer}>
-      <Text style={styles.headerText}>Imagem</Text>
-      <Text style={styles.headerText}>Nome</Text>
+      <Text style={styles.headerText}>Carta</Text>     
       <Text style={styles.headerText}>Código</Text> 
       <Text style={styles.headerText}>Valor Pago</Text>   
       <Text style={styles.headerText}>Valor Atual</Text>  

@@ -212,7 +212,7 @@ export default function Body({
           <Ionicons name="add-circle-outline" size={24} color="#4A90E2" />
         </TouchableOpacity>
 
-        {/* Botão Excluir */}
+        {/* Botão Excluir Coleção*/}
         <TouchableOpacity
           style={styles.addButton}
           onPress={() =>
@@ -230,6 +230,27 @@ export default function Body({
           }
         >
           <Ionicons name="trash-outline" size={24} color="red" />
+        </TouchableOpacity>
+
+        {/* Botão editar Coleção */}
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() =>
+            router.push({
+              pathname: '(telas)/EditarDropdowns',
+              params: {                
+                titulo: 'Editar Coleção',                
+                colecao:true,
+                label:'Editar Coleção',
+                placeholder:'Nome da coleção',
+                data: JSON.stringify(dataColecao) // << AQUI
+                
+               
+              },
+            })
+          }
+        >
+          <Ionicons name="create-outline" size={24} color="green" />
         </TouchableOpacity>
       </View>
       
@@ -325,7 +346,7 @@ export default function Body({
           <Ionicons name="add-circle-outline" size={24} color="#4A90E2" />
         </TouchableOpacity>
 
-        {/* Botão Excluir */}
+        {/* Botão Excluir Raridade*/}
         <TouchableOpacity
           style={styles.addButton}
           onPress={() =>
@@ -343,6 +364,26 @@ export default function Body({
           }
         >
           <Ionicons name="trash-outline" size={24} color="red" />
+        </TouchableOpacity>
+        {/* Botão editar Raridade */}
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() =>
+            router.push({
+              pathname: '(telas)/EditarDropdowns',
+              params: {                
+                titulo: 'Editar Raridade',                
+                raridade:true,
+                label:'Raridade',
+                placeholder:'Nome da Raridade',
+                data: JSON.stringify(dataRaridade) // << AQUI
+                
+               
+              },
+            })
+          }
+        >
+          <Ionicons name="create-outline" size={24} color="green" />
         </TouchableOpacity>
       </View>
       
@@ -377,7 +418,7 @@ export default function Body({
         >
           <Ionicons name="add-circle-outline" size={24} color="#4A90E2" />
         </TouchableOpacity>
-        {/* Botão Excluir */}
+        {/* Botão Excluir Qualidade*/}
         <TouchableOpacity
           style={styles.addButton}
           onPress={() =>
@@ -395,6 +436,27 @@ export default function Body({
           }
         >
           <Ionicons name="trash-outline" size={24} color="red" />
+        </TouchableOpacity>
+
+        {/* Botão editar Qualidade */}
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() =>
+            router.push({
+              pathname: '(telas)/EditarDropdowns',
+              params: {                
+                titulo: 'Editar Qualidade',                
+                qualidade:true,
+                label:'Qualidade',
+                placeholder:'Nome da Qualidade',
+                data: JSON.stringify(dataQualidade) // << AQUI
+                
+               
+              },
+            })
+          }
+        >
+          <Ionicons name="create-outline" size={24} color="green" />
         </TouchableOpacity>
 
           

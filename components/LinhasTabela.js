@@ -10,18 +10,16 @@ export default function LinhasTabela({ data, onPress, valorAtual }) {
 
   return (
     <View style={styles.row}>
-      {/* Célula de imagem da carta */}
+      {/* Célula com nome acima da imagem */}
       <TouchableOpacity style={styles.cell} onPress={() => onPress(data, "Id")}>
-        <Image
-          source={{ uri: data.imagem }}
-          style={styles.image}
-          resizeMode="center"
-        />
-      </TouchableOpacity>
-
-      {/* Nome da carta */}
-      <TouchableOpacity style={styles.cell} onPress={() => onPress(data, "Nome")}>
-        <Text style={styles.textTexto}>{String(data.nome).toUpperCase()}</Text>
+        <View style={{ alignItems: "center" }}>
+          <Text style={styles.cardName}>{String(data.nome).toUpperCase()}</Text>
+          <Image
+            source={{ uri: data.imagem }}
+            style={styles.image}
+            resizeMode="center"
+          />
+        </View>
       </TouchableOpacity>
 
       {/* Código da carta */}
@@ -77,9 +75,11 @@ const styles = StyleSheet.create({
     fontSize: 10,
     textAlign: "center",
   },
-  textTexto: {
-    fontSize: 8,
+  cardName: {
+    fontSize: 9,
     textAlign: "center",
+    marginBottom: 4,
+    fontWeight: "500",
   },
   image: {
     width: 60,
