@@ -72,8 +72,8 @@ export const createDatabase = () => {
 
         CREATE TABLE IF NOT EXISTS colecoes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        colecao TEXT NOT NULL,
-        codigo TEXT NOT NULL
+        colecao TEXT NOT NULL UNIQUE,
+        codigo TEXT NOT NULL UNIQUE
         );
 
         CREATE TABLE IF NOT EXISTS vendas (
@@ -91,6 +91,23 @@ export const createDatabase = () => {
           data_venda TEXT,
           preco_venda REAL
         );
+
+        INSERT INTO raridades (raridade) VALUES 
+        ('Common'),
+        ('Rare'),
+        ('Super Rare'),
+        ('Ultra Rare'),
+        ('Secret Rare'),
+        ('Ghost Rare'),
+        ('Quarter Century Secret Rare');
+
+        INSERT INTO qualidades (qualidade) VALUES 
+        ('Nova'),
+        ('Quase Nova'),
+        ('Pouco Jogada'),
+        ('Muito Jogada'),
+        ('Danificada');
+
 
 
 
@@ -217,9 +234,19 @@ export const createDatabase = () => {
     const db = await openDatabase();
   
     try {
-      db.runAsync(
-        `INSERT INTO colecoes (colecao,codigo) VALUES (?,?)`,
-        [colecao,codigo]
+      const existente = await db.getFirstAsync(
+        `SELECT * FROM colecoes WHERE colecao = ? AND codigo = ?`,
+        [colecao, codigo]
+      );
+  
+      if (existente) {
+        console.log("⚠️ Coleção já existente.");
+        return;
+      }
+  
+      await db.runAsync(
+        `INSERT INTO colecoes (colecao, codigo) VALUES (?, ?)`,
+        [colecao, codigo]
       );
   
       console.log("✅ Coleção inserida com sucesso!");
@@ -229,6 +256,8 @@ export const createDatabase = () => {
       Alert.alert("Erro", "Não foi possível inserir a coleção.");
     }
   };
+  
+  
 
   export const editarColecao = async (id, colecao, codigo) => {
     const db = await openDatabase();
@@ -338,7 +367,7 @@ export const createDatabase = () => {
   
     try {
       const result = await db.getAllAsync(`SELECT * FROM cartas`);
-      console.log('Cartas no banco',result);
+      //console.log('Cartas no banco',result);
       return result;
     } catch (error) {
       console.error("❌ Erro ao buscar cartas:", error);

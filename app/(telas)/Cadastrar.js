@@ -5,6 +5,7 @@ import Cabecalho from '../../components/Cabecalho';
 import Botao from '../../components/Botao';
 import Body from '../../components/Body';
 import { inserirCarta } from '../DAO/database';
+import { useLocalSearchParams } from 'expo-router';
 
 export default function Cadastrar() {
   const [nome, setNome] = useState('');
@@ -17,6 +18,7 @@ export default function Cadastrar() {
   const [qualidade, setQualidade] = useState('');
   const [imagem, setImagem] = useState('');
   const [link, setLink] = useState('');
+  const {apagar} = useLocalSearchParams();
 
   const campos = {
     nome: [nome, setNome],
@@ -51,11 +53,14 @@ export default function Cadastrar() {
         }
       }
     })();
+
+    if(apagar) apagaCampos();
+
+
   }, []);
 
   // 💾 Atualiza AsyncStorage sempre que algum valor muda
-  useEffect(() => {
-
+  useEffect(() => {    
   
     const persistirCampos = async () => {
       try {
@@ -77,7 +82,12 @@ export default function Cadastrar() {
     persistirCampos();
   }, [nome, codigo, colecao, precoCompra, dataCompra, quantidade, raridade, qualidade, imagem, link]);
   
-
+const apagaCampos = async()=>{
+  for (const campo in campos) {
+    campos[campo][1](campo === 'quantidade' ? 0 : '');
+    await AsyncStorage.removeItem(`@cadastro_${campo}`);
+  }
+}
   
 
   const handleSalvar = () => {
@@ -118,10 +128,7 @@ export default function Cadastrar() {
               inserirCarta(carta);
               //Alert.alert('Sucesso', 'Carta inserida com sucesso!');
               // Limpa campos e cache
-              for (const campo in campos) {
-                campos[campo][1](campo === 'quantidade' ? 0 : '');
-                await AsyncStorage.removeItem(`@cadastro_${campo}`);
-              }
+              apagaCampos();
             } catch (error) {
               console.error('Erro ao inserir Carta:', error);
               Alert.alert('Erro', 'Não foi possível salvar a carta.');

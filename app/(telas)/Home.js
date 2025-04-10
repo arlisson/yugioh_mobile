@@ -62,7 +62,7 @@ useEffect(() => {
 
 const Cadastrar = () =>{
 
-  router.push('(telas)/Cadastrar')
+  router.push({pathname:'(telas)/Cadastrar',params: { apagar: true } })
 }
 
 const carregarCartas = async () => {
@@ -80,12 +80,12 @@ const carregarValoresAtuais = async (cartas) => {
       }
 
       try {
-        const resultado = await scrapeCheerio(carta.link);
+        const resultado = await scrapeCheerio(carta.link,carta.raridade);
         return {
           id: carta.id,
           valor: {
-            precoNumber: resultado?.precoNumber ?? null,
-            precoFormatado: resultado?.precoFormatado ?? 'R$ 0,00'
+            precoNumber: resultado?.precoMinimoPorRaridade ?? null,
+            precoFormatado: resultado?.precoMinimoPorRaridadeFormatado ?? 'R$ 0,00',
           }
         };
       } catch (error) {
@@ -167,7 +167,7 @@ return (
                 : stylesGeral.lucroNegativo
             ]}
           >
-            Lucro: R$ {totalVendido != null && totalGasto != null ? lucroTotal.toFixed(2) : 'Carregando...'}
+            Lucro Vendas: R$ {totalVendido != null && totalGasto != null ? lucroTotal.toFixed(2) : 'Carregando...'}
           </Text>
         </View>
 

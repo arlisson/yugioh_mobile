@@ -13,7 +13,7 @@ import { router } from 'expo-router';
 import DropDownComponent from './DropDownComponent';
 import { Ionicons } from '@expo/vector-icons';
 import ContadorQuantidade from './Contador';
-import { buscarColecoes,buscarQualidades,buscarRaridades } from '../app/DAO/database';
+import { buscarColecoes,buscarQualidades,buscarRaridades, inserirColecao } from '../app/DAO/database';
 import scrapeCheerio from '../components/scrapeCheerio';
 
 import CampoCalendario from './Calendario';
@@ -68,6 +68,10 @@ export default function Body({
           //if (dados.precoFormatado) setPrecoCompra(dados.precoFormatado.replace('R$', '').trim());
           if (dados.imagem) setImagem(dados.imagem);
           //if (dados.data) setDataCompra(dados.data);
+          if (dados.colecao) await inserirColecao(dados.colecao,dados.codigoLimpo)
+          fetchColecao();
+          setColecao(dados.colecao);
+          setCodigo(dados.codigoLimpo);
           setLink(newImageUrl);
         } else {
           alert('Não foi possível obter as informações da carta.');
@@ -80,6 +84,7 @@ export default function Body({
 
     setModalVisible(false);
   };
+
   const fetchColecao= async () => {
     try {
       const data = await buscarColecoes();

@@ -79,26 +79,34 @@ const carregarValoresAtuais = async (cartas) => {
   const resultados = await Promise.all(
     cartas.map(async (carta) => {
       if (!carta.link) {
-        return { id: carta.id, preco: '-' };
+        return { id: carta.id, valor: null };
       }
 
       try {
-        const resultado = await scrapeCheerio(carta.link);
-        return { id: carta.id, preco: resultado?.precoFormatado || 'R$ 0,00' };
+        const resultado = await scrapeCheerio(carta.link,carta.raridade);
+        return {
+          id: carta.id,
+          valor: {
+            precoNumber: resultado?.precoMinimoPorRaridade ?? null,
+            precoFormatado: resultado?.precoMinimoPorRaridadeFormatado ?? 'R$ 0,00',
+          }
+        };
       } catch (error) {
         console.warn(`Erro ao buscar preço da carta ${carta.nome}:`, error.message);
-        return { id: carta.id, preco: 'Erro' };
+        return { id: carta.id, valor: null };
       }
     })
   );
 
-  // Transforma array em objeto { [id]: preco }
+  // transforma em objeto { [id]: valor }
   const valoresObj = resultados.reduce((acc, item) => {
-    acc[item.id] = item.preco;
+    acc[item.id] = item.valor;
     return acc;
   }, {});
 
   setValoresAtuais(valoresObj);
+  console.log("VALOR ATUAL", item.id, valoresAtuais[item.id]);
+
 };
 
 const handleSelected = (data) => {
@@ -158,7 +166,7 @@ return (
                 : stylesGeral.lucroNegativo
             ]}
           >
-            Lucro: R$ {totalVendido != null && totalGasto != null ? lucroTotal.toFixed(2) : 'Carregando...'}
+            Lucro Vendas: R$ {totalVendido != null && totalGasto != null ? lucroTotal.toFixed(2) : 'Carregando...'}
           </Text>
         </View>
         <HeaderTabela/>
