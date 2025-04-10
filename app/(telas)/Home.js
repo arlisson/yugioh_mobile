@@ -62,7 +62,7 @@ useEffect(() => {
 
 const Cadastrar = () =>{
 
-  router.push({pathname:'(telas)/Cadastrar',params: { apagar: true } })
+  router.push('(telas)/Cadastrar');
 }
 
 const carregarCartas = async () => {

@@ -41,7 +41,8 @@ export default function Body({
    fetchColecao();
    fetchRaridade();
    fetchQualidade();
-  }, []);               
+  }, []);    
+            
   
 
   const [dataColecao,setDataColecao] = useState([]);
@@ -58,7 +59,7 @@ export default function Body({
     setModalVisible(true);
   };
 
-  const handleConfirm = async () => {
+  const handleBuscar = async () => {
     if (newImageUrl && newImageUrl.trim() !== '') {
       try {
         const dados = await scrapeCheerio(newImageUrl);
@@ -68,10 +69,14 @@ export default function Body({
           //if (dados.precoFormatado) setPrecoCompra(dados.precoFormatado.replace('R$', '').trim());
           if (dados.imagem) setImagem(dados.imagem);
           //if (dados.data) setDataCompra(dados.data);
-          if (dados.colecao) await inserirColecao(dados.colecao,dados.codigoLimpo)
+          if (dados.colecao) await inserirColecao({
+            colecao: dados.colecao,
+            codigo: dados.codigoLimpo,
+            mensagem: false
+          });
           fetchColecao();
           setColecao(dados.colecao);
-          setCodigo(dados.codigoLimpo);
+          setCodigo(dados.codigoCarta);
           setLink(newImageUrl);
         } else {
           alert('Não foi possível obter as informações da carta.');
@@ -164,7 +169,7 @@ export default function Body({
             }}
             
           />
-          <TouchableOpacity style={styles.botaoBuscar} onPress={handleConfirm}>
+          <TouchableOpacity style={styles.botaoBuscar} onPress={handleBuscar}>
             <Text style={styles.textoBotaoBuscar}>Buscar</Text>
           </TouchableOpacity>
         </View>

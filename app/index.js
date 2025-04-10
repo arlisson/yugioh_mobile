@@ -1,15 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text,TouchableOpacity,ScrollView,TextInput,StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View,StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import Cabecalho from '../components/Cabecalho';
 import Botao from '../components/Botao';
 import {createDatabase,deleteDatabase, openDatabase, buscarCartas} from './DAO/database';
-import scrapeCheerio from '../components/scrapeCheerio';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function Index() {   
 
-  //scrapeCheerio('https://mypcards.com/yugioh/produto/249214/yubel');
+  useEffect(() => {
+    const limparAsyncStorage = async () => {
+      try {
+        await AsyncStorage.clear();
+        console.log('✅ AsyncStorage limpo com sucesso!');
+      } catch (e) {
+        console.error('❌ Erro ao limpar AsyncStorage:', e);
+      }
+    };
+  
+    limparAsyncStorage();
+  }, []);
 
 return (
    

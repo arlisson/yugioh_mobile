@@ -230,10 +230,15 @@ export const createDatabase = () => {
 
 
 
-  export const inserirColecao = async (colecao, codigo) => {
+  export const inserirColecao = async ({ colecao, codigo, mensagem = true }) => {
     const db = await openDatabase();
   
     try {
+      if (!colecao || !codigo) {
+        console.warn("⚠️ Coleção ou código inválido (vazio ou undefined).");
+        return;
+      }
+  
       const existente = await db.getFirstAsync(
         `SELECT * FROM colecoes WHERE colecao = ? AND codigo = ?`,
         [colecao, codigo]
@@ -250,12 +255,13 @@ export const createDatabase = () => {
       );
   
       console.log("✅ Coleção inserida com sucesso!");
-      Alert.alert("Sucesso", "Coleção inserida com sucesso!");
+      if (mensagem) Alert.alert("Sucesso", "Coleção inserida com sucesso!");
     } catch (error) {
       console.error("❌ Erro ao inserir coleção:", error);
       Alert.alert("Erro", "Não foi possível inserir a coleção.");
     }
   };
+  
   
   
 

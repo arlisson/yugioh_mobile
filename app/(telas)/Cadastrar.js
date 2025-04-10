@@ -18,7 +18,7 @@ export default function Cadastrar() {
   const [qualidade, setQualidade] = useState('');
   const [imagem, setImagem] = useState('');
   const [link, setLink] = useState('');
-  const {apagar} = useLocalSearchParams();
+
 
   const campos = {
     nome: [nome, setNome],
@@ -41,6 +41,7 @@ export default function Cadastrar() {
       return false;
     }
   };
+  
 
   // 🔄 Carrega os dados persistidos no AsyncStorage
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function Cadastrar() {
       }
     })();
 
-    if(apagar) apagaCampos();
+ 
 
 
   }, []);

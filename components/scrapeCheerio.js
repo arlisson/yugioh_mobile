@@ -42,6 +42,9 @@ export default async function scrapeCheerio(url, raridadeAlvo = "Common") {
         if (valor) codigoTexto = valor;
       }
     });
+
+    const codigoCarta = codigoTexto.split('_')[1];
+
     // 🔍 Código limpo (ex: "ra03-en")
     let codigoLimpo = null;
     if (codigoTexto && codigoTexto.includes("_")) {
@@ -100,7 +103,8 @@ export default async function scrapeCheerio(url, raridadeAlvo = "Common") {
     console.log('📊 Linhas da tabela:', resultado.length);
     console.log(`🔍 Menor preço para raridade "${raridadeAlvo}":`, menorPreco, `(${menorPrecoFormatado})`);
     console.log('Coleção: ',colecao);
-    console.log('Código da coleção: ',codigoLimpo)
+    console.log('Código da carta:',codigoCarta);
+    console.log('Código da coleção: ',codigoLimpo);
 
     return {
       nome,
@@ -112,7 +116,8 @@ export default async function scrapeCheerio(url, raridadeAlvo = "Common") {
       precoMinimoPorRaridadeFormatado: menorPrecoFormatado,
       tabelaCompleta: resultado,
       colecao,
-      codigoLimpo
+      codigoLimpo,
+      codigoCarta
     };
 
   } catch (error) {

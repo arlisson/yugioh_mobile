@@ -11,23 +11,23 @@ export default function Adicionar() {
   const [texto,setTexto] = useState();
   const [codigoColecao,setCodigoColecao] = useState();
 
-  const handleSalvar = (texto, codigoColecao) => {
+  const handleSalvar = async (texto, codigoColecao) => {
     if (!texto?.trim()) {
       return Alert.alert('Erro', 'Preencha o nome.');
     }
   
     if (colecao) {
-      if (!codigoColecao?.trim()) {
+      if (!codigoColecao?.trim() ) {
         return Alert.alert('Erro', 'Preencha o código da coleção.');
       }
   
-      inserirColecao(texto, codigoColecao);
+      await inserirColecao({colecao:texto, codigo:codigoColecao});
       router.back();
     } else if (qualidade) {
-      inserirQualidade(texto);
+      await inserirQualidade(texto);
       router.back();
     } else if (raridade) {
-      inserirRaridade(texto);
+      await inserirRaridade(texto);
       router.back();
     }
   };
