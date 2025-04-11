@@ -1,7 +1,8 @@
 import cheerio from 'cheerio-without-node-native';
 import { Alert } from "react-native";
+import { convertToObject } from 'typescript';
 
-export default async function scrapeCheerio(url, raridadeAlvo = "Common") {
+export default async function scrapeCheerio(url, raridadeAlvo = "Common", alerta=true) {
   try {
     const response = await fetch(url, {
       headers: {
@@ -18,6 +19,9 @@ export default async function scrapeCheerio(url, raridadeAlvo = "Common") {
 
     // Preço bruto geral da página
     const precoRaw = $('span.moeda').first().text().trim() || 'R$ 0,00';
+
+    //buscar se a tabela de preços existe
+    const vazio = $('div.empty').first().text().trim() || null;
 
     // Conversão para número
     const precoNumber = parseFloat(
@@ -51,12 +55,22 @@ export default async function scrapeCheerio(url, raridadeAlvo = "Common") {
 
     // 🔍 Código limpo (ex: "ra03-en")
     let codigoLimpo = null;
+
     if (codigoTexto && codigoTexto.includes("_")) {
-      const match = codigoTexto.match(/_([^_]+?-\w{2})\d*$/);
+      const match = codigoTexto.match(/_([a-zA-Z0-9\-]+)/); // captura tudo após "_"
+
       if (match) {
-        codigoLimpo = match[1];
+        const base = match[1]; // ex: "phni-en038" ou "bpt-007"
+
+        // Agora remove os dígitos finais, se houverem
+        const cleanMatch = base.match(/^([a-zA-Z0-9]+-[a-zA-Z]+)|^([a-zA-Z0-9]+-)/);
+
+        if (cleanMatch) {
+          codigoLimpo = cleanMatch[1] || cleanMatch[2];
+        }
       }
     }
+
     // Imagem da carta
     const imagem = $('#produto-img img').last().attr('src');
 
@@ -101,7 +115,7 @@ export default async function scrapeCheerio(url, raridadeAlvo = "Common") {
 
     // 📦 Logs
     console.log('📄 Nome da carta:', nome);
-    console.log('💰 Preço geral da página:', precoFormatado);
+    console.log('💰 Preço geral da página:', precoNumber);
     console.log('🖼️ Imagem:', imagem);
     console.log('📆 Data:', dataAtual);
     console.log('📊 Linhas da tabela:', resultado.length);
@@ -109,20 +123,43 @@ export default async function scrapeCheerio(url, raridadeAlvo = "Common") {
     console.log('Coleção: ',colecao);
     console.log('Código da carta:',codigoCarta);
     console.log('Código da coleção: ',codigoLimpo);
+    console.log('Está vazio: ',vazio);
 
+    
+    if (vazio !== null) {
+      // Conteúdo vazio → Retorna valores padrões
+      if(alerta) Alert.alert('Aviso',`Nenhum valor encontrado para ${nome}, seus preços serão sunstituídos por 0.00`);
+      return {
+        nome,
+        imagem,
+        data: dataAtual,
+        precoNumber:0.00,
+        precoFormatado:'R$ 0.00',
+        precoMinimoPorRaridade: 0.00,
+        precoMinimoPorRaridadeFormatado:'R$ 0.00',
+        tabelaCompleta: resultado,
+        colecao,
+        codigoLimpo,
+        codigoCarta
+        
+      };
+    }
+    
+    // Caso contrário, segue com retorno normal
     return {
       nome,
       imagem,
       data: dataAtual,
       precoNumber,
       precoFormatado,
-      precoMinimoPorRaridade: menorPreco,
-      precoMinimoPorRaridadeFormatado: menorPrecoFormatado,
+      precoMinimoPorRaridade: menorPreco ?? precoNumber,
+      precoMinimoPorRaridadeFormatado: menorPrecoFormatado ?? precoFormatado,
       tabelaCompleta: resultado,
       colecao,
       codigoLimpo,
       codigoCarta
     };
+    
 
   } catch (error) {
     console.error('❌ Erro ao fazer scraping:', error.message);

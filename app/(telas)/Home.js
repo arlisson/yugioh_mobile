@@ -101,12 +101,12 @@ const carregarValoresAtuais = async (cartas) => {
       }
 
       try {
-        const resultado = await scrapeCheerio(carta.link,carta.raridade);
+        const resultado = await scrapeCheerio(carta.link,carta.raridade,false);
         return {
           id: carta.id,
           valor: {
-            precoNumber: resultado?.precoMinimoPorRaridade ?? null,
-            precoFormatado: resultado?.precoMinimoPorRaridadeFormatado ?? 'R$ 0,00',
+            precoNumber: resultado?.precoMinimoPorRaridade ?? resultado?.precoNumber ?? 0.00,
+            precoFormatado: resultado?.precoMinimoPorRaridadeFormatado ?? resultado?.precoFormatado?? 'R$ 0,00',
           }
         };
       } catch (error) {

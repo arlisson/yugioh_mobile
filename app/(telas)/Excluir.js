@@ -98,7 +98,7 @@ export default function Excluir() {
       </View>
 
       <View style={styles.footer}>
-        <Botao texto="Excluir" onPress={() => handleExcluir(id)} cor='red' />
+        <Botao texto="Excluir" onPress={() => handleExcluir(id)} cor='red' foto='trash-outline'/>
       </View>
     </View>
   );

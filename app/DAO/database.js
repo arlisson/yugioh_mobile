@@ -240,8 +240,8 @@ export const createDatabase = () => {
       }
   
       const existente = await db.getFirstAsync(
-        `SELECT * FROM colecoes WHERE colecao = ? AND codigo = ?`,
-        [colecao, codigo]
+        `SELECT * FROM colecoes WHERE colecao = ?`,
+        [colecao]
       );
   
       if (existente) {
